@@ -1,3 +1,5 @@
 <template>
-  <div class="px-3 pb-3 text-center text-sm text-black/45">footer</div>
+  <div class="py-6 text-center text-xs text-black/50">
+    © {{ new Date().getFullYear() }} Kirin Team
+  </div>
 </template>
