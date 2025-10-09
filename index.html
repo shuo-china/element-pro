@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + Vue + TS</title>
+  </head>
+  <body>
+    <div id="app">
+      <style>
+        .loading {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .ball {
+          width: 0.8rem;
+          height: 0.8rem;
+          background-color: #409eff;
+          border-radius: 50%;
+        }
+        .ball:first-of-type {
+          transform: translateX(-200%);
+          animation: left-swing 0.5s ease-in alternate infinite;
+        }
+        .ball:last-of-type {
+          transform: translateX(0);
+          animation: right-swing 0.5s ease-out alternate infinite;
+        }
+        @keyframes left-swing {
+          100%,
+          50% {
+            transform: translateX(0);
+          }
+        }
+        @keyframes right-swing {
+          50% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(200%);
+          }
+        }
+      </style>
+      <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
