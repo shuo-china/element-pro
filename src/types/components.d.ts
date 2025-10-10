@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Footer: typeof import('./../components/Footer/index.vue')['default']
     ProTable: typeof import('./../components/ProTable/index.vue')['default']
+    ProUpload: typeof import('./../components/ProUpload/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchForm: typeof import('./../components/SearchForm/index.vue')['default']

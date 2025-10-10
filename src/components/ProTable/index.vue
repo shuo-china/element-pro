@@ -21,27 +21,15 @@
 </template>
 
 <script setup lang="ts">
-import type { Service } from "@/hooks/useRequest/type";
-import type { PaginationOptions } from "@/hooks/usePagination";
 import type { PaginationProps, TableInstance } from "element-plus";
 import usePagination from "@/hooks/usePagination";
+import { proTableProps, type ProTableProps } from "./props";
 
 defineOptions({
   inheritAttrs: false,
 });
 
-const props = defineProps({
-  request: {
-    type: Function as PropType<Service<any, any>>,
-    required: true,
-  },
-  requestOptions: {
-    type: Object as PropType<PaginationOptions>,
-  },
-  paginationProps: {
-    type: Object as PropType<Partial<PaginationProps>>,
-  },
-});
+const props = defineProps(proTableProps as ProTableProps);
 
 const defaultPaginationProps: Partial<PaginationProps> = {
   layout: "prev, pager, next, sizes, total",

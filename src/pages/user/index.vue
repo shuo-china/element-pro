@@ -21,7 +21,7 @@
         <el-input v-model="searchParams.job_no" placeholder="请输入工号" />
       </el-form-item>
     </SearchForm>
-    <ProTable class="mt-4" ref="tableRef" :request="getUserListApi">
+    <ProTable ref="tableRef" :request="getUserListApi">
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="mobile" label="手机号" />
       <el-table-column prop="create_time" label="创建时间" />

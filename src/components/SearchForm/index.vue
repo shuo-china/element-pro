@@ -1,39 +1,39 @@
 <template>
-  <el-form ref="formRef" label-suffix=":" v-bind="$attrs">
-    <el-row :gutter="36" class="gap-y-6">
-      <el-col
-        v-for="(vnode, index) in $slots.default?.()"
-        v-bind="span"
-        :class="isCollapse && index >= collapsedMaxCount ? 'hidden!' : ''"
-      >
-        <component :is="vnode" />
-      </el-col>
-      <div class="flex flex-1 items-center justify-end px-3">
-        <el-button type="primary" icon="Search" @click="handleSearch"
-          >查询</el-button
+  <div class="mb-4">
+    <el-form ref="formRef" label-suffix=":" v-bind="$attrs">
+      <el-row :gutter="36" class="gap-y-6">
+        <el-col
+          v-for="(vnode, index) in $slots.default?.()"
+          v-bind="span"
+          :class="isCollapse && index >= collapsedMaxCount ? 'hidden!' : ''"
         >
-        <el-button icon="Refresh" @click="handleReset">重置</el-button>
-        <div
-          v-if="showCollapseBtn"
-          class="ml-3 cursor-pointer text-sm text-[var(--el-color-primary)]"
-          @click="toggleCollapse()"
-        >
-          <template v-if="isCollapse">
-            展开
-            <el-icon>
-              <arrow-down />
-            </el-icon>
-          </template>
-          <template v-else>
-            收起
-            <el-icon>
-              <arrow-up />
-            </el-icon>
-          </template>
+          <component :is="vnode" />
+        </el-col>
+        <div class="flex flex-1 items-center justify-end px-3">
+          <el-button type="primary" @click="handleSearch">查询</el-button>
+          <el-button @click="handleReset">重置</el-button>
+          <div
+            v-if="showCollapseBtn"
+            class="ml-3 cursor-pointer text-sm text-[var(--el-color-primary)]"
+            @click="toggleCollapse()"
+          >
+            <template v-if="isCollapse">
+              展开
+              <el-icon>
+                <arrow-down />
+              </el-icon>
+            </template>
+            <template v-else>
+              收起
+              <el-icon>
+                <arrow-up />
+              </el-icon>
+            </template>
+          </div>
         </div>
-      </div>
-    </el-row>
-  </el-form>
+      </el-row>
+    </el-form>
+  </div>
 </template>
 
 <script setup lang="ts">

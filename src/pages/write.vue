@@ -1,4 +1,7 @@
 <template>
+  {{ data }}
+  <hr />
+  {{ fileList }}
   <search-form :model="data">
     <el-form-item label="Activity name" prop="name">
       <el-input v-model="data.name" />
@@ -15,6 +18,14 @@
     <el-form-item label="Instant delivery" prop="c'ccc">
       <el-switch v-model="data.delivery" />
     </el-form-item>
+    <el-form-item label="Instant delivery" prop="c'ccc">
+      <pro-upload
+        type="image"
+        v-model:file-list="fileList"
+        v-model:model-value="data.fileIds"
+        :limit="2"
+      />
+    </el-form-item>
   </search-form>
 </template>
 
@@ -22,5 +33,8 @@
 const data = reactive({
   name: "",
   delivery: false,
+  fileIds: "",
 });
+
+const fileList = ref([]);
 </script>

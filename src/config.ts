@@ -9,6 +9,18 @@ export const pagination = {
 const config = {
   title: "Kirin Pro",
   logo: "/logo.svg",
+  upload: {
+    image: {
+      limitExt: ["jpg", "png"],
+      // 单位:KB
+      limitSize: 0,
+    },
+    file: {
+      limitExt: [],
+      // 不限制
+      limitSize: 0,
+    },
+  },
   pagination,
 };
 
