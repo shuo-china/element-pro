@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    DialogForm: typeof import('./../components/DialogForm/index.vue')['default']
     Footer: typeof import('./../components/Footer/index.vue')['default']
     ProTable: typeof import('./../components/ProTable/index.vue')['default']
     ProUpload: typeof import('./../components/ProUpload/index.vue')['default']

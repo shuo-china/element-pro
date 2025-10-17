@@ -12,10 +12,10 @@
               src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
               alt="logo"
             />
-            <span class="ml-4 text-3xl font-bold">Element Pro</span>
+            <span class="ml-4 text-3xl font-bold">{{ config.title }}</span>
           </div>
           <div class="mt-3 mb-10 text-sm text-black/50">
-            Element Pro 中后台前端/设计解决方案
+            {{ config.description }}
           </div>
         </div>
         <div class="mx-auto w-80 max-w-[75vw]">
@@ -65,6 +65,7 @@
 import { useUserStore } from "@/store/user";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import bg from "@/assets/bg.png";
+import config from "@/config";
 
 const userStore = useUserStore();
 const router = useRouter();

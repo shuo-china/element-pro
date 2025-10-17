@@ -1,11 +1,5 @@
 <template>
-  <el-table
-    ref="_ref"
-    v-loading="loading"
-    :data="data"
-    size="large"
-    v-bind="$attrs"
-  >
+  <el-table ref="_ref" v-loading="loading" :data="data" v-bind="tableProps">
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData || {}"></slot>
     </template>
@@ -21,15 +15,32 @@
 </template>
 
 <script setup lang="ts">
-import type { PaginationProps, TableInstance } from "element-plus";
-import usePagination from "@/hooks/usePagination";
-import { proTableProps, type ProTableProps } from "./props";
+import type { PaginationProps, TableInstance, TableProps } from "element-plus";
+import usePagination, { type PaginationOptions } from "@/hooks/usePagination";
+import type { Service } from "@/hooks/useRequest/type";
 
-defineOptions({
-  inheritAttrs: false,
-});
+const props = withDefaults(
+  defineProps<{
+    request: Service<any, any>;
+    requestOptions?: PaginationOptions;
+    tableProps?: Partial<TableProps<any>>;
+    paginationProps?: Partial<PaginationProps>;
+  }>(),
+  {
+    requestOptions: () => ({}),
+    tableProps: () => ({}),
+    paginationProps: () => ({}),
+  },
+);
 
-const props = defineProps(proTableProps as ProTableProps);
+const defaultTableProps: Partial<TableProps<any>> = {
+  size: "large",
+  headerCellClassName: "bg-[#f5f7fa] text-[var(--el-text-color-regular)]",
+};
+
+const tableProps = computed(() =>
+  Object.assign({}, defaultTableProps, props.tableProps),
+);
 
 const defaultPaginationProps: Partial<PaginationProps> = {
   layout: "prev, pager, next, sizes, total",

@@ -44,7 +44,7 @@
       </el-aside>
       <el-main class="bg-[#f0f2f5] p-0">
         <el-scrollbar view-class="flex flex-col h-full">
-          <div class="flex-1 p-5">
+          <div class="flex-1 p-6">
             <div class="rounded bg-white p-6">
               <el-config-provider :locale="zhCn">
                 <router-view></router-view>

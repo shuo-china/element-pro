@@ -3,8 +3,8 @@
     ref="uploadRef"
     :multiple="multiple"
     :file-list="fileList"
-    :class="{ disabled: fileList.length >= uploadAttrs.limit! }"
-    v-bind="uploadAttrs"
+    :class="{ disabled: fileList.length >= uploadProps.limit! }"
+    v-bind="uploadProps"
     :before-upload="handleBeforeUpload"
     :http-request="handleHttpRequest"
     @update:file-list="handleUpdateFileList"
@@ -40,47 +40,60 @@ import {
   type UploadProps,
   type UploadRawFile,
   type UploadRequestOptions,
+  type UploadUserFile,
 } from "element-plus";
-import { proUploadProps, type FileItem, type ProUploadProps } from "./props";
 import { uploadApi, type UploadResponseData } from "@/api/upload";
 
-defineOptions({
-  inheritAttrs: false,
-});
-
-const attrs = useAttrs();
+type FileItem = UploadUserFile & { id: number };
 
 const emit = defineEmits([UPDATE_MODEL_EVENT, UPDATE_FILE_LIST_EVENT]);
 
-const props = defineProps(proUploadProps as ProUploadProps);
+const props = withDefaults(
+  defineProps<{
+    type?: "image" | "file";
+    modelValue?: string | number;
+    fileList?: FileItem[];
+    showTip?: boolean;
+    uploadProps?: Partial<UploadProps>;
+    config?: {
+      apiURL?: string;
+      limitExt?: string[];
+      limitSize?: number;
+    };
+  }>(),
+  {
+    type: "image",
+    modelValue: "",
+    showTip: true,
+    fileList: () => [],
+    config: () => ({}),
+    uploadProps: () => ({}),
+  },
+);
 
-const defaultFileTypeAttrs: Partial<UploadProps> = {
+const defaultFileUploadProps: Partial<UploadProps> = {
   limit: 1,
 };
 
-const defaultImageTypeAttrs: Partial<UploadProps> = {
+const defaultImageUploadProps: Partial<UploadProps> = {
   limit: 1,
   listType: "picture-card",
 };
 
-const uploadAttrs = computed<Partial<UploadProps>>(() => {
-  return props.type === "file"
-    ? {
-        ...defaultFileTypeAttrs,
-        ...attrs,
-      }
-    : {
-        ...defaultImageTypeAttrs,
-        ...attrs,
-      };
-});
+const uploadProps = computed<Partial<UploadProps>>(() =>
+  Object.assign(
+    {},
+    props.type === "file" ? defaultFileUploadProps : defaultImageUploadProps,
+    props.uploadProps,
+  ),
+);
 
 const uploadConfig = computed(() => ({
   ...config.upload[props.type],
   ...props.config,
 }));
 
-const multiple = computed(() => (uploadAttrs.value.limit === 1 ? false : true));
+const multiple = computed(() => (uploadProps.value.limit === 1 ? false : true));
 
 const limitExt = computed(() => {
   let ext = uploadConfig.value.limitExt;
@@ -145,7 +158,7 @@ const getCurrentValue = (files: FileItem[]) => {
   const ids = files
     .filter((f) => f.status === "success")
     .map((f) => f.id || (f.response as UploadResponseData)?.id);
-  const value = uploadAttrs.value.limit === 1 ? ids[0] : ids.join(",");
+  const value = uploadProps.value.limit === 1 ? ids[0] : ids.join(",");
   return value ?? "";
 };
 
@@ -163,12 +176,12 @@ const handleRemove = (_uploadFile, uploadFiles: UploadFiles) => {
 
 const uploadRef = ref<UploadInstance>();
 const handleExceed = (files: File[]) => {
-  if (uploadAttrs.value.limit === 1 && uploadRef.value) {
+  if (uploadProps.value.limit === 1 && uploadRef.value) {
     uploadRef.value.clearFiles();
     uploadRef.value.handleStart(files[0] as UploadRawFile);
     uploadRef.value.submit();
   } else {
-    ElMessage.error(`文件上传数量最多 ${uploadAttrs.value.limit} 个`);
+    ElMessage.error(`文件上传数量最多 ${uploadProps.value.limit} 个`);
   }
 };
 

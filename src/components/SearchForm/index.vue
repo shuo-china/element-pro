@@ -1,7 +1,7 @@
 <template>
-  <div class="mb-4">
-    <el-form ref="formRef" label-suffix=":" v-bind="$attrs">
-      <el-row :gutter="36" class="gap-y-6">
+  <div class="mb-6">
+    <el-form ref="formRef" label-suffix=":" v-bind="formProps">
+      <el-row :gutter="48" class="gap-y-6">
         <el-col
           v-for="(vnode, index) in $slots.default?.()"
           v-bind="span"
@@ -9,7 +9,10 @@
         >
           <component :is="vnode" />
         </el-col>
-        <div class="flex flex-1 items-center justify-end px-3">
+        <div
+          class="flex flex-1 items-center px-6"
+          :class="isCollapse ? 'justify-start' : 'justify-end'"
+        >
           <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button @click="handleReset">重置</el-button>
           <div
@@ -38,11 +41,11 @@
 
 <script setup lang="ts">
 import { breakpointsElement } from "@vueuse/core";
-import type { FormInstance } from "element-plus";
+import type { FormInstance, FormProps } from "element-plus";
 
-defineOptions({
-  inheritAttrs: false,
-});
+defineProps<{
+  formProps?: FormProps;
+}>();
 
 const emit = defineEmits(["search", "reset"]);
 

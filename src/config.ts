@@ -8,6 +8,7 @@ export const pagination = {
 
 const config = {
   title: "Kirin Pro",
+  description: "Element Pro 中后台前端/设计解决方案",
   logo: "/logo.svg",
   upload: {
     image: {
