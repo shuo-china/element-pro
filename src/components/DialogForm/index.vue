@@ -4,7 +4,7 @@
       <slot />
     </el-form>
     <template #footer>
-      <el-button @click="handleCancel">取消</el-button>
+      <el-button @click="visible = false">取消</el-button>
       <el-button
         type="primary"
         :disabled="loading"
@@ -18,7 +18,9 @@
 
 <script setup lang="ts">
 import type { DialogProps, FormInstance, FormProps } from "element-plus";
+import _ from "lodash";
 
+let initialValues;
 const visible = defineModel("visible", { type: Boolean, default: false });
 
 const props = defineProps<{
@@ -28,11 +30,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   submit: [cb: (result: boolean) => void];
-  reset: [];
 }>();
 
 const defaultDialogProps: Partial<DialogProps> = {
-  width: "560px",
+  width: "500px",
   modalClass: "dialog-form-modal",
 };
 
@@ -58,22 +59,22 @@ const handleConfirm = () => {
     if (valid && !submitting.value) {
       submitting.value = true;
       emit("submit", (result: boolean) => {
-        submitting.value = false;
         if (result) {
           visible.value = false;
+        } else {
+          submitting.value = false;
         }
       });
     }
   });
 };
 
-const handleCancel = () => {
-  visible.value = false;
-};
-
 const handleClosed = () => {
+  submitting.value = false;
   formRef.value?.resetFields();
-  emit("reset");
+  if (props.formProps?.model) {
+    Object.assign(props.formProps.model, _.cloneDeep(initialValues));
+  }
 };
 
 const _expose = {
@@ -81,6 +82,12 @@ const _expose = {
 };
 
 defineExpose(_expose);
+
+onMounted(() => {
+  if (props.formProps?.model) {
+    initialValues = _.cloneDeep(props.formProps.model);
+  }
+});
 </script>
 
 <style lang="scss" scoped>

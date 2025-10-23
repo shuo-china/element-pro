@@ -8,7 +8,7 @@ function createRequest<R = any, P extends unknown[] = any>(
   const { onSuccess, onError, onBefore, onAfter } = options;
 
   const loading = ref(initialState?.loading ?? false);
-  const data = shallowRef<Nullable<R>>(initialState?.data ?? null);
+  const data = shallowRef<R | undefined>(initialState?.data);
   const error = shallowRef(initialState?.error);
   const params = ref(initialState?.params) as Ref<P>;
   const plugins: PluginType<R, P>[] = [];

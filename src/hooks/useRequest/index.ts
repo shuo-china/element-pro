@@ -1,29 +1,34 @@
-import createRequest from './createRequest'
-import usePollingPlugin from './plugins/usePollingPlugin'
-import type { InititalState, Options, PluginImplementType, Service } from './type'
+import createRequest from "./createRequest";
+import usePollingPlugin from "./plugins/usePollingPlugin";
+import type {
+  InititalState,
+  Options,
+  PluginImplementType,
+  Service,
+} from "./type";
 
 function useRequest<R = any, P extends unknown[] = any>(
   service: Service<R, P>,
   options: Options<R, P> = {},
-  initialState: InititalState<R, P> = {}
+  initialState: InititalState<R, P> = {},
 ) {
-  const { manual = false, defaultParams = [] as unknown as P } = options
+  const { manual = false, defaultParams = [] as unknown as P } = options;
 
-  const requestInstance = createRequest(service, options, initialState)
+  const requestInstance = createRequest(service, options, initialState);
 
-  const plugins: PluginImplementType<R, P>[] = [usePollingPlugin]
+  const plugins: PluginImplementType<R, P>[] = [usePollingPlugin];
 
-  plugins.forEach(p => {
-    requestInstance.plugins.push(p(requestInstance, options))
-  })
+  plugins.forEach((p) => {
+    requestInstance.plugins.push(p(requestInstance, options));
+  });
 
   if (!manual) {
-    requestInstance.run(...defaultParams)
+    requestInstance.run(...defaultParams);
   }
 
   onUnmounted(() => {
-    requestInstance.cancel()
-  })
+    requestInstance.cancel();
+  });
 
   return {
     loading: requestInstance.loading,
@@ -34,8 +39,8 @@ function useRequest<R = any, P extends unknown[] = any>(
     refresh: requestInstance.refresh,
     refreshAsync: requestInstance.refreshAsync,
     run: requestInstance.run,
-    runAsync: requestInstance.runAsync
-  }
+    runAsync: requestInstance.runAsync,
+  };
 }
 
-export default useRequest
+export default useRequest;

@@ -1,13 +1,18 @@
 import router from "@/router";
 import { access } from "./access";
+import { useConfigStore } from "@/store/config";
 import { useUserStore } from "@/store/user";
 import { useMenuStore } from "@/store/menu";
 
 const whiteList = ["Login"];
 
 router.beforeEach(async (to, _from, next) => {
-  const userStore = useUserStore();
+  const configStore = useConfigStore();
+  if (!configStore.isInitialized) {
+    await configStore.init();
+  }
 
+  const userStore = useUserStore();
   if (!userStore.token) {
     if (whiteList.includes(to.name as string)) {
       return next();

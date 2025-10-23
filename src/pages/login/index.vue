@@ -12,10 +12,12 @@
               src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
               alt="logo"
             />
-            <span class="ml-4 text-3xl font-bold">{{ config.title }}</span>
+            <span class="ml-4 text-3xl font-bold">{{
+              config?.base.title
+            }}</span>
           </div>
           <div class="mt-3 mb-10 text-sm text-black/50">
-            {{ config.description }}
+            {{ config?.base.description }}
           </div>
         </div>
         <div class="mx-auto w-80 max-w-[75vw]">
@@ -65,8 +67,10 @@
 import { useUserStore } from "@/store/user";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import bg from "@/assets/bg.png";
-import config from "@/config";
+import { useConfigStore } from "@/store/config";
 
+const configStore = useConfigStore();
+const { config } = storeToRefs(configStore);
 const userStore = useUserStore();
 const router = useRouter();
 
@@ -96,7 +100,10 @@ const handleSubmit = () => {
     if (valid) {
       loading.value = true;
       userStore
-        .getAccessToken(formData)
+        .getAccessToken({
+          mobile: formData.username,
+          password: formData.password,
+        })
         .then(() => {
           ElMessage.success("登录成功");
           router.push("/");

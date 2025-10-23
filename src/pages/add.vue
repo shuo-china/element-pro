@@ -5,8 +5,10 @@
     :form-props="{ model: formData, rules }"
     @submit="handleSubmit"
   >
-    <el-form-item label="姓名" prop="name">
-      <el-input v-model="formData.name" />
+    <el-form-item label="配置类型" prop="type">
+      <el-select v-model="formData.type">
+        <el-select-option value="text">单行文本</el-select-option>
+      </el-select>
     </el-form-item>
   </dialog-form>
 </template>
@@ -16,6 +18,9 @@ import { ElMessage, type FormRules } from "element-plus";
 
 const id = defineModel("id", { type: Number, default: 0 });
 const formRef = ref();
+const formData = ref({
+  type: "",
+});
 
 const visible = computed({
   get: () => {
@@ -28,10 +33,6 @@ const visible = computed({
   },
 });
 
-const formData = ref({
-  name: "",
-});
-
 const rules: FormRules = {
   name: [
     { required: true, message: "Please input Activity name", trigger: "blur" },
@@ -39,16 +40,16 @@ const rules: FormRules = {
   ],
 };
 
-const getInitialValues = () => {
+const setInitialValues = (id: number) => {
+  if (!id) {
+    return;
+  }
   formRef.value.loading = true;
   setTimeout(() => {
     formRef.value.loading = false;
-    formData.value = {
-      name: "张三",
-    };
   }, 1000);
 };
-watch(id, getInitialValues);
+watch(id, setInitialValues);
 
 const handleSubmit = (cb) => {
   setTimeout(() => {

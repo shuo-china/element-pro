@@ -19,7 +19,9 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const getUserInfo = async () => {
-    const { id, name, roles } = await getCurrentUserInfoApi();
+    const {
+      base_info: { id, name, roles },
+    } = await getCurrentUserInfoApi();
     userInfo.value = {
       id,
       nickname: name,

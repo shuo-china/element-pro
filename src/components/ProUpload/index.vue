@@ -3,7 +3,10 @@
     ref="uploadRef"
     :multiple="multiple"
     :file-list="fileList"
-    :class="{ disabled: fileList.length >= uploadProps.limit! }"
+    :class="{
+      disabled: fileList.length >= uploadProps.limit!,
+      empty: fileList.length === 0,
+    }"
     v-bind="uploadProps"
     :before-upload="handleBeforeUpload"
     :http-request="handleHttpRequest"
@@ -30,7 +33,6 @@
 
 <script setup lang="ts">
 import config from "@/config";
-import { UPDATE_FILE_LIST_EVENT, UPDATE_MODEL_EVENT } from "@/utils/constants";
 import { byteTransform } from "@/utils/transform";
 import {
   ElMessage,
@@ -44,14 +46,14 @@ import {
 } from "element-plus";
 import { uploadApi, type UploadResponseData } from "@/api/upload";
 
-type FileItem = UploadUserFile & { id: number };
+type FileItem = UploadUserFile & { key: string; path?: string };
 
-const emit = defineEmits([UPDATE_MODEL_EVENT, UPDATE_FILE_LIST_EVENT]);
+const emit = defineEmits(["update:modelValue", "update:file-list", "change"]);
 
 const props = withDefaults(
   defineProps<{
     type?: "image" | "file";
-    modelValue?: string | number;
+    modelValue?: string;
     fileList?: FileItem[];
     showTip?: boolean;
     uploadProps?: Partial<UploadProps>;
@@ -140,38 +142,59 @@ const handleBeforeUpload = (rawFile: UploadRawFile) => {
   return true;
 };
 
-const fileList = ref<FileItem[]>(props.fileList || []);
+const transformFileList = (files: FileItem[]) => {
+  files.forEach((file) => {
+    if (!file.url && file.path) {
+      file.url = file.path;
+    }
+  });
+  return files;
+};
+
+const fileList = ref<FileItem[]>(transformFileList(props.fileList) || []);
 
 const handleUpdateFileList = (newVal: FileItem[]) => {
   fileList.value = newVal;
-  emit(UPDATE_FILE_LIST_EVENT, newVal);
+  emit("update:file-list", newVal);
 };
 
 watch(
   () => props.fileList,
   (newValue) => {
-    fileList.value = newValue || [];
+    fileList.value = transformFileList(newValue) || [];
   },
 );
 
 const getCurrentValue = (files: FileItem[]) => {
-  const ids = files
+  const keys = files
     .filter((f) => f.status === "success")
-    .map((f) => f.id || (f.response as UploadResponseData)?.id);
-  const value = uploadProps.value.limit === 1 ? ids[0] : ids.join(",");
+    .map((f) => f.key || (f.response as UploadResponseData)?.key);
+  const value = uploadProps.value.limit === 1 ? keys[0] : keys.join(",");
   return value ?? "";
 };
 
 const handleSuccess = (_response, _uploadFile, uploadFiles: UploadFiles) => {
-  emit(UPDATE_MODEL_EVENT, getCurrentValue(uploadFiles as FileItem[]));
+  const value = getCurrentValue(uploadFiles as FileItem[]);
+  if (value !== props.modelValue) {
+    emit("update:modelValue", value);
+    emit("change", value);
+  }
 };
 
 const handleError = () => {
-  emit(UPDATE_MODEL_EVENT, getCurrentValue(fileList.value));
+  const value = getCurrentValue(fileList.value);
+  if (value !== props.modelValue) {
+    emit("update:modelValue", value);
+    emit("change", value);
+  }
 };
 
 const handleRemove = (_uploadFile, uploadFiles: UploadFiles) => {
-  emit(UPDATE_MODEL_EVENT, getCurrentValue(uploadFiles as FileItem[]));
+  const value = getCurrentValue(uploadFiles as FileItem[]);
+  if (value !== props.modelValue) {
+    emit("update:modelValue", value);
+    emit("change", value);
+  }
 };
 
 const uploadRef = ref<UploadInstance>();
@@ -205,5 +228,21 @@ function handlePreview(uploadFile: UploadFile) {
 <style lang="scss" scoped>
 .disabled :deep(.el-upload--picture-card) {
   display: none;
+}
+
+.empty :deep(.el-upload-list) {
+  margin-top: 0;
+}
+
+:deep(.el-upload-list .el-upload-list__item:last-child) {
+  margin-bottom: 0;
+}
+
+:deep(.el-upload-list--picture-card) {
+  --el-upload-list-picture-card-size: 120px;
+}
+
+:deep(.el-upload--picture-card) {
+  --el-upload-picture-card-size: 120px;
 }
 </style>

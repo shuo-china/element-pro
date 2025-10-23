@@ -6,16 +6,18 @@ export function getAccessTokenApi(data: {
   password: string;
 }) {
   return request<{ access_token: string }>({
-    url: "/tokens",
+    url: "/login/tokens",
     method: "post",
     data,
   });
 }
 
 interface UserInfoResponseData {
-  id: number;
-  name: string;
-  roles: string[];
+  base_info: {
+    id: number;
+    name: string;
+    roles: string[];
+  };
 }
 
 export function getCurrentUserInfoApi(options?: AxiosRequestConfig) {

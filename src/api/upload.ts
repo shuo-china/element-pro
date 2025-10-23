@@ -2,7 +2,7 @@ import request from "@/utils/request";
 import type { AxiosRequestConfig } from "axios";
 
 export interface UploadResponseData {
-  id: number;
+  key: string;
   name: string;
   path: string;
 }

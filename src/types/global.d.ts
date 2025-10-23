@@ -7,6 +7,11 @@ declare global {
 
   type UnRef<T> = T extends Ref<infer V> ? V : T;
 
+  type Option = {
+    label: string;
+    value: string | number;
+  };
+
   type ApiErrorData = {
     code: string;
     message: string;

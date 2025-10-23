@@ -2,11 +2,7 @@
   <el-container class="h-full">
     <el-header class="flex h-15 items-center border-b border-black/15">
       <div class="h-8 w-47">
-        <img
-          class="h-full"
-          src="https://element-plus.org/images/element-plus-logo.svg"
-          alt="logo"
-        />
+        <img class="h-full" :src="config?.base.logo" alt="logo" />
       </div>
       <el-menu
         router
@@ -63,6 +59,10 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 import { useMenuStore } from "@/store/menu";
 import MenuItem from "./MenuItem.vue";
 import { useUserStore } from "@/store/user";
+import { useConfigStore } from "@/store/config";
+
+const configStore = useConfigStore();
+const { config } = storeToRefs(configStore);
 
 const menuStore = useMenuStore();
 const userStore = useUserStore();
