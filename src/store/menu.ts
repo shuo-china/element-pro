@@ -3,6 +3,7 @@ import type { RouteMeta, RouteRecordRaw } from "vue-router";
 import { routes } from "@/router";
 import { useUserStore } from "./user";
 import { access } from "@/router/access";
+import { useConfigStore } from "./config";
 
 export type Menu = {
   title: string;
@@ -63,7 +64,9 @@ function generateMenuByRoute(
 
 export const useMenuStore = defineStore("menu", () => {
   const currentRoute = useRoute();
-  const layout = ref<"top" | "side" | "mix">("mix");
+  const configStore = useConfigStore();
+  const { config } = storeToRefs(configStore);
+  const layout = computed(() => config.value?.base.layout || "side");
 
   const activePaths = computed(() =>
     currentRoute.matched && currentRoute.matched.length

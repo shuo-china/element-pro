@@ -1,7 +1,7 @@
-import { pagination as paginationConfig } from "@/config";
 import useRequest from "./useRequest";
 import { merge, pick } from "lodash";
 import type { Options, Service } from "./useRequest/type";
+import { useConfigStore } from "@/store/config";
 
 interface PaginationType {
   pageKey: string;
@@ -18,20 +18,25 @@ export interface PaginationOptions<R = any, P extends unknown[] = any>
   extends Options<R, P>,
     PaginationExtendsOption {}
 
-const defaultPaginationOptions: PaginationType = {
-  // reuqest keys
-  pageKey: paginationConfig.requestPageKey,
-  pageSizeKey: paginationConfig.requestPageSizeKey,
-  // response keys
-  totalKey: paginationConfig.responseTotalKey,
-  dataKey: paginationConfig.responseDataKey,
-};
+const configStore = useConfigStore();
 
 function usePagination<R = any, P extends unknown[] = any>(
   service: Service<R, P>,
   options: PaginationOptions<R, P> = {},
 ) {
   const { pagination, ...restOptions } = options;
+
+  const { config } = configStore;
+
+  const defaultPaginationOptions: PaginationType = {
+    // reuqest keys
+    pageKey: config?.pagination.requestPageKey || "page",
+    pageSizeKey: config?.pagination.requestPageSizeKey || "list_rows",
+    // response keys
+    totalKey: config?.pagination.responseTotalKey || "total",
+    dataKey: config?.pagination.responseDataKey || "data",
+  };
+
   const { pageKey, pageSizeKey, totalKey, dataKey } = Object.assign(
     {},
     defaultPaginationOptions,
@@ -43,7 +48,7 @@ function usePagination<R = any, P extends unknown[] = any>(
       defaultParams: [
         {
           [pageKey]: 1,
-          [pageSizeKey]: paginationConfig.defaultPageSize,
+          [pageSizeKey]: config?.pagination.defaultPageSize || 10,
         },
       ],
     },

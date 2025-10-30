@@ -6,21 +6,22 @@ interface Config {
     description: string;
     copyright: string;
     logo: string;
+    layout: "top" | "side" | "mix";
   };
-  // upload: Record<
-  //   "image" | "file",
-  //   {
-  //     limitExt: string[];
-  //     limitSize: number;
-  //   }
-  // >;
-  // pagination: {
-  //   defaultPageSize: number;
-  //   requestPageKey: string;
-  //   requestPageSizeKey: string;
-  //   responseTotalKey: string;
-  //   responseDataKey: string;
-  // };
+  upload: Record<
+    "image" | "file",
+    {
+      limitExt: string;
+      limitSize: number;
+    }
+  >;
+  pagination: {
+    defaultPageSize: number;
+    requestPageKey: string;
+    requestPageSizeKey: string;
+    responseTotalKey: string;
+    responseDataKey: string;
+  };
 }
 
 export const useConfigStore = defineStore("config", () => {
@@ -38,6 +39,24 @@ export const useConfigStore = defineStore("config", () => {
           description: res.base.web_site_description,
           copyright: res.base.web_site_copyright,
           logo: res.base.web_site_logo,
+          layout: res.base.web_site_layout,
+        },
+        pagination: {
+          defaultPageSize: res.pagination.default_page_size,
+          requestPageKey: res.pagination.request_page_key,
+          requestPageSizeKey: res.pagination.request_page_size_key,
+          responseTotalKey: res.pagination.response_total_key,
+          responseDataKey: res.pagination.response_data_key,
+        },
+        upload: {
+          image: {
+            limitExt: res.upload.upload_image_ext,
+            limitSize: res.upload.upload_image_size,
+          },
+          file: {
+            limitExt: res.upload.upload_file_ext,
+            limitSize: res.upload.upload_file_size,
+          },
         },
       };
     });

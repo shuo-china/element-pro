@@ -20,7 +20,7 @@
     </el-form-item>
     <el-form-item label="Instant delivery" prop="c'ccc">
       <pro-upload
-        type="image"
+        type="file"
         v-model:file-list="fileList"
         v-model:model-value="data.fileIds"
         :limit="2"

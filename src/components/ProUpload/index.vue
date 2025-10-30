@@ -21,18 +21,16 @@
       <el-button icon="Upload">上传</el-button>
     </template>
     <template #tip v-if="showTip">
-      <div v-if="limitExtTip" class="mt-1.5 text-xs text-black/50">
-        {{ limitExtTip }}
-      </div>
-      <div v-if="limitSizeTip" class="mt-1.5 text-xs text-black/50">
-        {{ limitSizeTip }}
+      <div class="mt-1.5 text-xs text-black/50">
+        <span>{{ limitSizeTip }}</span>
+        <span v-if="limitSizeTip && limitExtTip">，</span>
+        <span>{{ limitExtTip }}</span>
       </div>
     </template>
   </el-upload>
 </template>
 
 <script setup lang="ts">
-import config from "@/config";
 import { byteTransform } from "@/utils/transform";
 import {
   ElMessage,
@@ -45,10 +43,14 @@ import {
   type UploadUserFile,
 } from "element-plus";
 import { uploadApi, type UploadResponseData } from "@/api/upload";
+import { useConfigStore } from "@/store/config";
 
 type FileItem = UploadUserFile & { key: string; path?: string };
 
 const emit = defineEmits(["update:modelValue", "update:file-list", "change"]);
+
+const configStore = useConfigStore();
+const { config } = storeToRefs(configStore);
 
 const props = withDefaults(
   defineProps<{
@@ -91,14 +93,14 @@ const uploadProps = computed<Partial<UploadProps>>(() =>
 );
 
 const uploadConfig = computed(() => ({
-  ...config.upload[props.type],
+  ...config.value?.upload[props.type],
   ...props.config,
 }));
 
 const multiple = computed(() => (uploadProps.value.limit === 1 ? false : true));
 
 const limitExt = computed(() => {
-  let ext = uploadConfig.value.limitExt;
+  let ext = uploadConfig.value.limitExt || [];
   if (typeof ext === "string") {
     ext = ext ? (ext as string).split(",").map((e) => e.toLowerCase()) : [];
   }
@@ -107,14 +109,14 @@ const limitExt = computed(() => {
 
 const limitExtTip = computed(() => {
   if (limitExt.value.length) {
-    return `支持${limitExt.value.join("、")}格式的文件`;
+    return `支持${limitExt.value.join("、")}格式`;
   }
   return "";
 });
 
 const limitSizeTip = computed(() => {
   if (uploadConfig.value.limitSize) {
-    return `最大上传文件大小：${byteTransform(uploadConfig.value.limitSize)}`;
+    return `大小不超过：${byteTransform(uploadConfig.value.limitSize)}`;
   }
   return "";
 });
@@ -126,7 +128,9 @@ const handleBeforeUpload = (rawFile: UploadRawFile) => {
       .substring(rawFile.name.lastIndexOf(".") + 1)
       .toLowerCase();
     if (!limitExtArr.includes(suffix)) {
-      ElMessage.error(`文件格式不正确，当前支持格式：${limitExtArr.join(",")}`);
+      ElMessage.error(
+        `文件格式不正确，当前支持格式：${limitExtArr.join("，")}`,
+      );
       return false;
     }
   }
