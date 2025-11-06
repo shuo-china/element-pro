@@ -5,7 +5,7 @@
   >
     <div class="flex-1 py-8">
       <div class="flex flex-col px-8 py-6">
-        <div class="text-center">
+        <div class="mt-6 text-center">
           <div class="flex items-center justify-center">
             <img
               class="w-11"
@@ -59,19 +59,21 @@
         </div>
       </div>
     </div>
-    <Footer />
+    <div class="flex items-center justify-center py-5 text-xs text-black/50">
+      ©2025 Kirin Team
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/store/user";
+import { useManagerStore } from "@/store/manager";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import bg from "@/assets/bg.png";
 import { useConfigStore } from "@/store/config";
 
 const configStore = useConfigStore();
 const { config } = storeToRefs(configStore);
-const userStore = useUserStore();
+const managerStore = useManagerStore();
 const router = useRouter();
 
 const loading = ref(false);
@@ -99,7 +101,7 @@ const handleSubmit = () => {
   formRef.value.validate((valid) => {
     if (valid) {
       loading.value = true;
-      userStore
+      managerStore
         .getAccessToken({
           mobile: formData.username,
           password: formData.password,

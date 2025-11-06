@@ -1,7 +1,7 @@
 import router from "@/router";
 import { access } from "./access";
 import { useConfigStore } from "@/store/config";
-import { useUserStore } from "@/store/user";
+import { useManagerStore } from "@/store/manager";
 import { useMenuStore } from "@/store/menu";
 
 const whiteList = ["Login"];
@@ -12,8 +12,8 @@ router.beforeEach(async (to, _from, next) => {
     await configStore.init();
   }
 
-  const userStore = useUserStore();
-  if (!userStore.token) {
+  const managerStore = useManagerStore();
+  if (!managerStore.token) {
     if (whiteList.includes(to.name as string)) {
       return next();
     } else {
@@ -25,18 +25,18 @@ router.beforeEach(async (to, _from, next) => {
     return next("/");
   }
 
-  if (!userStore.hasUserInfo) {
+  if (!managerStore.hasManagerInfo) {
     try {
-      await userStore.getUserInfo();
+      await managerStore.getManagerInfo();
       useMenuStore().updateMenus();
     } catch (error) {
-      userStore.clear();
+      managerStore.clear();
       return next({ name: "Login" });
     }
   }
 
   for (const route of to.matched) {
-    if (!access(userStore.userInfo!, route.meta)) {
+    if (!access(managerStore.managerInfo!, route.meta)) {
       return next({ name: "Forbidden" });
     }
   }

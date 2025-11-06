@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Page>
     <SearchForm
       :model="searchParams"
       @reset="tableRef?.reset"
@@ -21,17 +21,17 @@
         <el-input v-model="searchParams.job_no" placeholder="请输入工号" />
       </el-form-item>
     </SearchForm>
-    <ProTable ref="tableRef" :request="getUserListApi">
+    <ProTable ref="tableRef" :request="getManagerPaginationApi">
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="mobile" label="手机号" />
       <el-table-column prop="create_time" label="创建时间" />
     </ProTable>
-  </div>
+  </Page>
 </template>
 
 <script setup lang="ts">
-import { getUserListApi } from "@/api/user";
-import type { ProTableInstance } from "@/components/ProTable/index.vue";
+import { getManagerPaginationApi } from "@/api/manager";
+import type { ProTableInstance } from "@/components/ProTable/types";
 
 const searchParams = ref({
   name: "",

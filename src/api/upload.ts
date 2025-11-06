@@ -5,6 +5,7 @@ export interface UploadResponseData {
   key: string;
   name: string;
   path: string;
+  full_path: string;
 }
 
 export function uploadApi(file: File, options?: AxiosRequestConfig) {

@@ -1,8 +1,8 @@
-import type { UserInfo } from "@/store/user";
+import type { ManagerInfo } from "@/store/manager";
 import type { RouteMeta } from "vue-router";
 
-export function access(userInfo: UserInfo, meta?: RouteMeta) {
+export function access(managerInfo: ManagerInfo, meta?: RouteMeta) {
   return meta?.roles
-    ? meta.roles.some((role) => userInfo.roles.includes(role))
+    ? meta.roles.some((role) => managerInfo.roles.includes(role))
     : true;
 }

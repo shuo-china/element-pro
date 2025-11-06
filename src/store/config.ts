@@ -4,7 +4,6 @@ interface Config {
   base: {
     title: string;
     description: string;
-    copyright: string;
     logo: string;
     layout: "top" | "side" | "mix";
   };
@@ -37,7 +36,6 @@ export const useConfigStore = defineStore("config", () => {
         base: {
           title: res.base.web_site_title,
           description: res.base.web_site_description,
-          copyright: res.base.web_site_copyright,
           logo: res.base.web_site_logo,
           layout: res.base.web_site_layout,
         },

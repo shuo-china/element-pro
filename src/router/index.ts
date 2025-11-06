@@ -70,41 +70,22 @@ export const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: "/test2",
-    component: AdminLayout,
-    redirect: "/test2/listen",
-    meta: {
-      title: "听",
-      icon: "Loading",
-    },
-    children: [
-      {
-        path: "listen",
-        component: () => import("@/pages/listen.vue"),
-        meta: {
-          title: "听",
-          icon: "Clock",
-        },
-      },
-      {
-        path: "speak",
-        component: () => import("@/pages/speak.vue"),
-        meta: {
-          title: "说",
-          icon: "View",
-        },
-      },
-    ],
-  },
-  {
     path: "/setting",
     component: AdminLayout,
-    redirect: "/setting/config",
+    redirect: "/setting/manager",
     meta: {
       title: "设置",
       icon: "Setting",
     },
     children: [
+      {
+        path: "manager",
+        component: () => import("@/pages/setting/manager/index.vue"),
+        meta: {
+          title: "管理员",
+          icon: "User",
+        },
+      },
       {
         path: "config",
         component: () => import("@/pages/setting/config/index.vue"),

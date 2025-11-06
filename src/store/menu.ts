@@ -1,7 +1,7 @@
 import { resolve } from "path-browserify";
 import type { RouteMeta, RouteRecordRaw } from "vue-router";
 import { routes } from "@/router";
-import { useUserStore } from "./user";
+import { useManagerStore } from "./manager";
 import { access } from "@/router/access";
 import { useConfigStore } from "./config";
 
@@ -15,14 +15,16 @@ export type Menu = {
 function gererateMenusByRoutes(routes: RouteRecordRaw[]) {
   const menus: Menu[] = [];
 
-  const { userInfo } = useUserStore();
+  const { managerInfo } = useManagerStore();
 
-  if (!userInfo) {
+  if (!managerInfo) {
     return [];
   }
 
   routes.forEach((route) => {
-    const menu = generateMenuByRoute(route, (meta) => access(userInfo, meta));
+    const menu = generateMenuByRoute(route, (meta) =>
+      access(managerInfo, meta),
+    );
     if (menu) {
       menus.push(menu);
     }

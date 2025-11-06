@@ -64,6 +64,4 @@ const _expose = {
 };
 
 defineExpose(_expose);
-
-export type ProTableInstance = typeof _expose;
 </script>

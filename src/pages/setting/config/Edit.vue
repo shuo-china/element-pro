@@ -6,17 +6,12 @@
     @submit="handleSubmit"
   >
     <el-form-item label="类型" prop="type">
-      <el-select v-model="formData.type" @change="handleTypeChange">
-        <el-option value="text" label="单行文本" />
-        <el-option value="textarea" label="多行文本" />
-        <el-option value="select" label="下拉框" />
-        <el-option value="switch" label="开关" />
-        <el-option value="tags" label="标签" />
-        <el-option value="number" label="数字" />
-        <el-option value="file" label="单个文件" />
-        <el-option value="files" label="多个文件" />
-        <el-option value="image" label="单张图片" />
-        <el-option value="images" label="多张图片" />
+      <el-select
+        v-model="formData.type"
+        :loading="dictLoading"
+        :options="dict.config_type"
+        @change="handleTypeChange"
+      >
       </el-select>
     </el-form-item>
     <el-form-item
@@ -69,6 +64,9 @@ import { getConfigDetailApi, updateConfigApi } from "@/api/config";
 import { ElMessage, type FormRules } from "element-plus";
 import { transformReceiveOptions, transformSubmitOptions } from "./shared";
 import _ from "lodash";
+import useDict from "@/hooks/useDict";
+
+const { dict, dictLoading } = useDict("config_type");
 
 const emit = defineEmits(["updated"]);
 

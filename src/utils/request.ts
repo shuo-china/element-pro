@@ -1,5 +1,5 @@
 import axios, { type AxiosRequestConfig } from "axios";
-import { useUserStore } from "@/store/user";
+import { useManagerStore } from "@/store/manager";
 import { ElMessage, ElNotification } from "element-plus";
 
 export class ApiError extends Error {
@@ -18,9 +18,9 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((config) => {
-  const userStore = useUserStore();
-  if (userStore.token) {
-    config.headers.Authorization = `Bearer ${userStore.token}`;
+  const managerStore = useManagerStore();
+  if (managerStore.token) {
+    config.headers.Authorization = `Bearer ${managerStore.token}`;
   }
   return config;
 });
@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
     const { response, message } = error;
     if (response && response.data) {
       if (response.status === 401 && response.data.code === "TOKEN_INVALID") {
-        useUserStore().clear();
+        useManagerStore().clear();
         location.reload();
       } else {
         const errorMsg = response.data.message || message || "Unknown Error";

@@ -17,7 +17,7 @@
           <el-button @click="handleReset">重置</el-button>
           <div
             v-if="showCollapseBtn"
-            class="ml-3 cursor-pointer text-sm text-[var(--el-color-primary)]"
+            class="text-primary ml-3 cursor-pointer text-sm"
             @click="toggleCollapse()"
           >
             <template v-if="isCollapse">
