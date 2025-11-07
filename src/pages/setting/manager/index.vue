@@ -25,15 +25,14 @@
         </template>
       </el-table-column>
     </pro-table>
-    <add v-model:visible="addVisible" />
+    <manager-form v-model:visible="addVisible" />
   </page>
 </template>
 
 <script setup lang="ts">
 import { getManagerPaginationApi } from "@/api/manager";
-import type { ProTableInstance } from "@/components/ProTable/types";
-import Add from "./Add.vue";
-import { add } from "lodash";
+import type { ProTableInstance } from "@/components/ProTable/type";
+import ManagerForm from "./ManagerForm.vue";
 
 const tableRef = ref<ProTableInstance>();
 

@@ -1,22 +1,38 @@
 import useRequest from "@/hooks/useRequest";
 import { getDictOptionsApi } from "@/api/dict";
+import type { Options } from "./useRequest/type";
+import { merge } from "lodash";
 
-function useDict<T extends string>(key: T | T[]) {
+type Result<T extends string> = Partial<Record<T, OptionItem[]>>;
+
+function useDict<T extends string, P extends unknown[] = any>(
+  key: T | T[],
+  options: Options<Result<T>, P> = {},
+) {
   const keys = Array.isArray(key) ? key.join(",") : key;
 
-  const { data, loading } = useRequest(getDictOptionsApi, {
-    defaultParams: [
-      {
-        dict_types: keys,
-      },
-    ],
-  });
+  const finallyOptions = merge(
+    {
+      defaultParams: [
+        {
+          dict_types: keys,
+        },
+      ] as Parameters<typeof getDictOptionsApi>,
+    },
+    options,
+  );
 
-  const dict = computed<Record<T, Option[]>>(() => data.value || {});
+  const { data, loading, ...rest } = useRequest(
+    getDictOptionsApi,
+    finallyOptions,
+  );
+
+  const dict = computed<Result<T>>(() => data.value || {});
 
   return {
     dict,
     dictLoading: loading,
+    ...rest,
   };
 }
 

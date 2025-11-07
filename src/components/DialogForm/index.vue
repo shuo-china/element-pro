@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="visible" v-bind="dialogProps" @closed="handleClosed">
+  <el-dialog
+    v-model="visible"
+    v-bind="dialogProps"
+    @open="handleOpen"
+    @closed="handleClosed"
+    destroy-on-close
+  >
     <el-form v-loading="loading" ref="formRef" v-bind="formProps">
       <slot />
     </el-form>
@@ -26,6 +32,7 @@ const visible = defineModel("visible", { type: Boolean, default: false });
 const props = defineProps<{
   dialogProps?: Partial<DialogProps>;
   formProps?: Partial<FormProps>;
+  request?: () => Promise<Record<string, any>>;
 }>();
 
 const emit = defineEmits<{
@@ -71,9 +78,26 @@ const handleConfirm = () => {
 
 const handleClosed = () => {
   submitting.value = false;
-  formRef.value?.resetFields();
   if (props.formProps?.model) {
     Object.assign(props.formProps.model, _.cloneDeep(initialValues));
+  }
+  formRef.value?.resetFields();
+};
+
+const handleOpen = () => {
+  if (props.request) {
+    loading.value = true;
+    props
+      .request()
+      .then((values) => {
+        initialValues = values;
+        if (props.formProps?.model && visible.value) {
+          Object.assign(props.formProps.model, _.cloneDeep(initialValues));
+        }
+      })
+      .finally(() => {
+        loading.value = false;
+      });
   }
 };
 

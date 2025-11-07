@@ -124,10 +124,10 @@ export function deleteDictValueApi(id: number, options?: AxiosRequestConfig) {
 }
 
 export function getDictOptionsApi(
-  params?: Record<string, any>,
+  params: Record<string, any>,
   options?: AxiosRequestConfig,
 ) {
-  return request<Record<string, Option[]>>({
+  return request({
     url: "/data/dict_types",
     method: "get",
     params,

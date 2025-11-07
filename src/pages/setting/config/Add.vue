@@ -66,11 +66,11 @@ import { transformSubmitOptions } from "./shared";
 import _ from "lodash";
 import useDict from "@/hooks/useDict";
 
-const { dict, dictLoading } = useDict("config_type");
-
 const emit = defineEmits(["created"]);
 
 const visible = defineModel("visible", { type: Boolean, default: false });
+
+const { dict, dictLoading } = useDict("config_type");
 
 const props = defineProps<{ groupName?: string }>();
 
@@ -80,7 +80,7 @@ const formData = ref({
   title: "",
   name: "",
   tips: "",
-  options: [] as Option[],
+  options: [] as OptionItem[],
 });
 
 const rules: FormRules = {

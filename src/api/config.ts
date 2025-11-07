@@ -29,7 +29,7 @@ export function getInitialConfigApi() {
 }
 
 export function getConfigGroupsApi() {
-  return request<Option[]>({
+  return request<OptionItem[]>({
     url: "/config/group",
     method: "get",
   });

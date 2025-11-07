@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { getManagerPaginationApi } from "@/api/manager";
-import type { ProTableInstance } from "@/components/ProTable/types";
+import type { ProTableInstance } from "@/components/ProTable/type";
 
 const searchParams = ref({
   name: "",

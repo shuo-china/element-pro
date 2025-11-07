@@ -26,7 +26,7 @@ export const transformSubmitValue = (type: ConfigType, value: any) => {
   }
 };
 
-export const transformReceiveOptions = (options: string): Option[] => {
+export const transformReceiveOptions = (options: string): OptionItem[] => {
   return options.split("\n").map((item) => {
     const splitedArr = item.split(":");
     return {
@@ -36,6 +36,6 @@ export const transformReceiveOptions = (options: string): Option[] => {
   });
 };
 
-export const transformSubmitOptions = (options: Option[]): string => {
+export const transformSubmitOptions = (options: OptionItem[]): string => {
   return options.map((item) => `${item.label}:${item.value}`).join("\n");
 };

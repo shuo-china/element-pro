@@ -7,7 +7,7 @@ declare global {
 
   type UnRef<T> = T extends Ref<infer V> ? V : T;
 
-  type Option = {
+  type OptionItem = {
     label: string;
     value: string | number;
   };

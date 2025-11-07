@@ -21,6 +21,18 @@
 import { createManagerApi } from "@/api/manager";
 import { ElMessage, type FormRules } from "element-plus";
 import { mobileRule } from "@/utils/rules";
+import useRequest from "@/hooks/useRequest";
+import { getRoleOptionsApi } from "@/api/role";
+
+const props = withDefaults(
+  defineProps<{
+    mode?: "update" | "create";
+    id?: number;
+  }>(),
+  {
+    mode: "create",
+  },
+);
 
 const emit = defineEmits(["created"]);
 
@@ -49,4 +61,6 @@ const handleSubmit = (cb) => {
       cb(false);
     });
 };
+
+const { loading: roleOptionsLoading } = useRequest(getRoleOptionsApi);
 </script>

@@ -77,7 +77,7 @@ const formData = ref({
   title: "",
   name: "",
   tips: "",
-  options: [] as Option[],
+  options: [] as OptionItem[],
 });
 
 const visible = computed({
