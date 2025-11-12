@@ -58,6 +58,12 @@
               @change="() => handleUpdateConfigValue(row)"
               :options="transformReceiveOptions(row.options)"
             />
+            <el-checkbox-group
+              v-else-if="row.type === 'checkbox'"
+              v-model="row.value"
+              @change="() => handleUpdateConfigValue(row)"
+              :options="transformReceiveOptions(row.options)"
+            />
             <el-switch
               v-else-if="row.type === 'switch'"
               v-model="row.value"

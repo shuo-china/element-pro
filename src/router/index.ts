@@ -43,36 +43,16 @@ export const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: "/test",
+    path: "/",
     component: AdminLayout,
-    redirect: "/test/about",
-    meta: {
-      title: "测试",
-      icon: "Search",
-    },
+    redirect: "/workplace",
     children: [
       {
-        path: "about",
-        component: () => import("@/pages/about.vue"),
+        path: "workplace",
+        component: () => import("@/pages/workplace/index.vue"),
         meta: {
-          title: "关于",
-          icon: "Female",
-        },
-      },
-      {
-        path: "write",
-        component: () => import("@/pages/write.vue"),
-        meta: {
-          title: "书写",
-          icon: "Male",
-        },
-      },
-      {
-        path: "user",
-        component: () => import("@/pages/user/index.vue"),
-        meta: {
-          title: "用户列表",
-          icon: "User",
+          title: "工作台",
+          icon: "Odometer",
         },
       },
     ],

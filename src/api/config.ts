@@ -9,7 +9,8 @@ export type ConfigType =
   | "images"
   | "file"
   | "files"
-  | "tags";
+  | "tags"
+  | "checkbox";
 
 export interface ConfigItem {
   id: number;

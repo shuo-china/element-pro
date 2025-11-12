@@ -7,11 +7,12 @@ interface Config {
     copyright: string;
     logo: string;
     layout: "top" | "side" | "mix";
+    loginType: "password" | "wechat";
   };
   upload: Record<
     "image" | "file",
     {
-      limitExt: string;
+      limitExt: string[];
       limitSize: number;
     }
   >;
@@ -43,6 +44,7 @@ export const useConfigStore = defineStore("config", () => {
           copyright: res.base.web_site_copyright,
           logo: res.base.web_site_logo,
           layout: res.base.web_site_layout,
+          loginType: res.base.web_site_login_type,
         },
         pagination: {
           defaultPageSize: res.pagination.default_page_size,

@@ -6,6 +6,7 @@ interface ManagerInfoResponseData {
     id: number;
     nickname: string;
     roles: string[];
+    is_top: number;
   };
 }
 

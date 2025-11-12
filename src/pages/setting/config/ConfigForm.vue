@@ -16,9 +16,9 @@
       </el-select>
     </el-form-item>
     <el-form-item
-      v-if="formData.type === 'select'"
+      v-if="formData.type === 'select' || formData.type === 'checkbox'"
       prop="options"
-      label="下拉框选项"
+      label="选项"
       required
     >
       <el-table :data="formData.options" size="small">
@@ -96,7 +96,6 @@ const rules: FormRules = {
   options: [
     {
       validator: (_rule, value, callback) => {
-        console.log(value);
         if (value.find((item) => !item.label || !item.value)) {
           callback(new Error("请输入完整的选项"));
         } else if (
@@ -122,7 +121,7 @@ const rules: FormRules = {
 };
 
 const handleTypeChange = (type) => {
-  if (type === "select") {
+  if (type === "select" || type === "checkbox") {
     if (formData.value.options.length === 0) {
       formData.value.options.push({
         label: "",

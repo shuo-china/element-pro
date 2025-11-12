@@ -7,7 +7,8 @@ export const transformReceiveValue = (type: ConfigType, value: string) => {
     case "switch":
       return value === "1" ? true : false;
     case "tags":
-      return value.split(",");
+    case "checkbox":
+      return value ? value.split(",") : [];
     default:
       return value;
   }
@@ -20,6 +21,7 @@ export const transformSubmitValue = (type: ConfigType, value: any) => {
     case "switch":
       return value ? "1" : "0";
     case "tags":
+    case "checkbox":
       return value.join(",");
     default:
       return value;
