@@ -1,6 +1,5 @@
 <template>
   <dialog-form
-    ref="formRef"
     v-model:visible="visible"
     :form-props="{ model: formData, rules }"
     :params="id"

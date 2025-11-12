@@ -1,5 +1,10 @@
 <template>
-  <el-dialog v-model="visible" v-bind="dialogProps" @closed="handleClosed">
+  <el-drawer
+    v-model="visible"
+    v-bind="drawerProps"
+    @closed="handleClosed"
+    class="drawer-form-container max-w-full"
+  >
     <el-form ref="formRef" v-loading="requesting" v-bind="formProps">
       <slot />
     </el-form>
@@ -13,11 +18,11 @@
         >确认</el-button
       >
     </template>
-  </el-dialog>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
-import type { DialogProps, FormInstance, FormProps } from "element-plus";
+import type { DrawerProps, FormInstance, FormProps } from "element-plus";
 import _ from "lodash";
 
 let initialValues;
@@ -27,7 +32,7 @@ const visible = defineModel("visible", { type: Boolean, default: false });
 
 const props = withDefaults(
   defineProps<{
-    dialogProps?: Partial<DialogProps>;
+    drawerProps?: Partial<DrawerProps>;
     formProps?: Partial<FormProps>;
     params?: any;
     request?: (params?: any) => Promise<Record<string, any>>;
@@ -41,17 +46,16 @@ const emit = defineEmits<{
   submit: [cb: (result: boolean) => void];
 }>();
 
-const defaultDialogProps: Partial<DialogProps> = {
-  width: "500px",
-  modalClass: "dialog-form-modal",
+const defaultDrawerProps: Partial<DrawerProps> = {
+  size: "800px",
 };
 
-const dialogProps = computed(() =>
-  Object.assign({}, defaultDialogProps, props.dialogProps),
+const drawerProps = computed(() =>
+  Object.assign({}, defaultDrawerProps, props.drawerProps),
 );
 
 const defaultFormProps: Partial<FormProps> = {
-  labelPosition: "top",
+  labelPosition: "left",
 };
 
 const formProps = computed(() =>
@@ -122,7 +126,9 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-:global(.dialog-form-modal .el-dialog) {
-  padding: 24px;
+.drawer-form-container {
+  :global(.el-drawer__header) {
+    margin-bottom: 0;
+  }
 }
 </style>
