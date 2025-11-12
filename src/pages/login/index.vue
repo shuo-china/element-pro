@@ -16,104 +16,53 @@
               config?.base.title
             }}</span>
           </div>
-          <div class="mt-3 mb-10 text-sm text-black/50">
+          <div class="mt-3 mb-6 text-sm text-black/50">
             {{ config?.base.description }}
           </div>
         </div>
         <div class="mx-auto w-80 max-w-[75vw]">
-          <el-form
-            ref="formRef"
-            :model="formData"
-            :rules="rules"
-            size="large"
-            @keyup.enter="handleSubmit"
-          >
-            <el-form-item prop="username">
-              <el-input
-                v-model="formData.username"
-                placeholder="用户名"
-                prefix-icon="User"
-                autocomplete="off"
-              />
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input
-                v-model="formData.password"
-                placeholder="密码"
-                prefix-icon="Lock"
-                show-password
-                autocomplete="off"
-              />
-            </el-form-item>
-            <el-form-item>
-              <el-button
-                class="w-full"
-                size="large"
-                type="primary"
-                :loading="loading"
-                @click="handleSubmit"
-                >登录</el-button
-              >
-            </el-form-item>
-          </el-form>
+          <el-tabs class="login-type-tabs">
+            <el-tab-pane label="账号密码登录">
+              <password-login />
+            </el-tab-pane>
+            <el-tab-pane label="微信扫码登录">
+              <wechat-login />
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </div>
     </div>
     <div class="flex items-center justify-center py-5 text-xs text-black/50">
-      ©2025 Kirin Team
+      {{ config?.base.copyright }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useManagerStore } from "@/store/manager";
-import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import bg from "@/assets/bg.png";
 import { useConfigStore } from "@/store/config";
+import PasswordLogin from "@/pages/login/PasswordLogin.vue";
+import WechatLogin from "@/pages/login/WechatLogin.vue";
 
 const configStore = useConfigStore();
 const { config } = storeToRefs(configStore);
-const managerStore = useManagerStore();
-const router = useRouter();
-
-const loading = ref(false);
-const formRef = ref<FormInstance>();
-
-const formData = reactive({
-  username: "",
-  password: "",
-});
-
-const rules: FormRules<typeof formData> = {
-  username: {
-    required: true,
-    message: "请输入用户名",
-  },
-  password: {
-    required: true,
-    message: "请输入密码",
-  },
-};
-
-const handleSubmit = () => {
-  if (!formRef.value) return;
-
-  formRef.value.validate((valid) => {
-    if (valid) {
-      loading.value = true;
-      managerStore
-        .getAccessToken({
-          mobile: formData.username,
-          password: formData.password,
-        })
-        .then(() => {
-          ElMessage.success("登录成功");
-          router.push("/");
-        })
-        .finally(() => {
-          loading.value = false;
-        });
-    }
-  });
-};
 </script>
+
+<style lang="scss" scoped>
+.login-type-tabs {
+  :deep(.el-tabs__header) {
+    margin-bottom: 20px;
+  }
+
+  :deep(.el-tabs__nav-scroll) {
+    display: flex;
+    justify-content: center;
+  }
+
+  :deep(.el-tabs__nav-wrap) {
+    &:after {
+      background-color: transparent !important;
+    }
+  }
+}
+</style>

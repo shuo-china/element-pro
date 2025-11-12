@@ -57,6 +57,7 @@ const { data, loading, currentPage, pageSize, total, search, reset, refresh } =
 const _ref = ref();
 
 const _expose = {
+  currentPage,
   search,
   reset,
   refresh,

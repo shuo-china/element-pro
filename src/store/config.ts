@@ -4,6 +4,7 @@ interface Config {
   base: {
     title: string;
     description: string;
+    copyright: string;
     logo: string;
     layout: "top" | "side" | "mix";
   };
@@ -21,6 +22,9 @@ interface Config {
     responseTotalKey: string;
     responseDataKey: string;
   };
+  wechat: {
+    appid: string;
+  };
 }
 
 export const useConfigStore = defineStore("config", () => {
@@ -36,6 +40,7 @@ export const useConfigStore = defineStore("config", () => {
         base: {
           title: res.base.web_site_title,
           description: res.base.web_site_description,
+          copyright: res.base.web_site_copyright,
           logo: res.base.web_site_logo,
           layout: res.base.web_site_layout,
         },
@@ -55,6 +60,9 @@ export const useConfigStore = defineStore("config", () => {
             limitExt: res.upload.upload_file_ext,
             limitSize: res.upload.upload_file_size,
           },
+        },
+        wechat: {
+          appid: res.wechat_login.wechat_login_appid,
         },
       };
     });

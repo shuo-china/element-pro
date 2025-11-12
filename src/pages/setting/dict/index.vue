@@ -11,7 +11,7 @@
           icon="Plus"
           plain
           class="h-full w-85 border-dashed"
-          @click="dictAddVisible = true"
+          @click="handleCreateDict"
           >添加字典</el-button
         >
       </div>
@@ -39,10 +39,10 @@
             <el-button
               size="small"
               icon="Edit"
-              @click.stop="dictEditId = item.id"
+              @click.stop="handleUpdateDict(item)"
             ></el-button>
             <el-popconfirm
-              title="确定删除吗?"
+              title="确定要删除吗?"
               @confirm="handleDeleteDict(item.id)"
             >
               <template #reference>
@@ -64,7 +64,7 @@
             :type="item.status === 1 ? 'primary' : 'danger'"
             class="cursor-pointer"
             @close="handleDeleteDictValue(item.id)"
-            @click="dictValEditId = item.id"
+            @click="handleUpdateDictVal(item)"
           >
             <span>{{ item.dict_key }}</span>
             <el-divider direction="vertical" />
@@ -74,20 +74,25 @@
             plain
             class="border-dashed"
             icon="Plus"
-            @click="dictValVisible = true"
+            @click="handleCreateDictVal"
             >添加字典值</el-button
           >
         </div>
       </el-card>
     </div>
-    <dict-add v-model:visible="dictAddVisible" @created="refreshDictList" />
-    <dict-edit v-model:id="dictEditId" @updated="refreshDictList" />
-    <dict-val-add
-      :dict-id="activeDictId"
-      v-model:visible="dictValVisible"
-      @created="refreshDictValueList"
+    <dict-form
+      :mode="dictMode"
+      v-model:visible="dictFormVisible"
+      :id="dictId"
+      @finished="refreshDictList"
     />
-    <dict-val-edit v-model:id="dictValEditId" @updated="refreshDictValueList" />
+    <dict-val-form
+      :dict-id="activeDictId"
+      :mode="dictValMode"
+      v-model:visible="dictValFormVisible"
+      :id="dictValId"
+      @finished="refreshDictValueList"
+    />
   </div>
 </template>
 
@@ -99,10 +104,8 @@ import {
   deleteDictValueApi,
 } from "@/api/dict";
 import useRequest from "@/hooks/useRequest";
-import DictAdd from "./DictAdd.vue";
-import DictEdit from "./DictEdit.vue";
-import DictValAdd from "./DictValAdd.vue";
-import DictValEdit from "./DictValEdit.vue";
+import DictForm from "./DictForm.vue";
+import DictValForm from "./DictValForm.vue";
 
 const { data: dictList, refresh: refreshDictList } = useRequest(getDictListApi);
 const {
@@ -121,14 +124,40 @@ watch(activeDictId, (v) => {
   });
 });
 
-const dictAddVisible = ref(false);
-const dictEditId = ref(0);
+const dictFormVisible = ref(false);
+const dictId = ref<number>();
+const dictMode = ref<"create" | "update">("create");
 
-const dictValVisible = ref(false);
-const dictValEditId = ref(0);
+const handleCreateDict = () => {
+  dictMode.value = "create";
+  dictId.value = undefined;
+  dictFormVisible.value = true;
+};
+
+const handleUpdateDict = (item) => {
+  dictMode.value = "update";
+  dictId.value = item.id;
+  dictFormVisible.value = true;
+};
 
 const handleDeleteDict = (id: number) => {
   deleteDictApi(id).then(() => refreshDictList());
+};
+
+const dictValFormVisible = ref(false);
+const dictValId = ref<number>();
+const dictValMode = ref<"create" | "update">("create");
+
+const handleCreateDictVal = () => {
+  dictValMode.value = "create";
+  dictValId.value = undefined;
+  dictValFormVisible.value = true;
+};
+
+const handleUpdateDictVal = (item) => {
+  dictValMode.value = "update";
+  dictValId.value = item.id;
+  dictValFormVisible.value = true;
 };
 
 const handleDeleteDictValue = (id: number) => {

@@ -39,16 +39,13 @@
         </el-scrollbar>
       </el-aside>
       <el-main class="bg-[#f0f2f5] p-6">
-        <el-config-provider :locale="zhCn">
-          <router-view></router-view>
-        </el-config-provider>
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script setup lang="ts">
-import zhCn from "element-plus/es/locale/lang/zh-cn";
 import { useMenuStore } from "@/store/menu";
 import MenuItem from "./MenuItem.vue";
 import { useManagerStore } from "@/store/manager";

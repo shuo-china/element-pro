@@ -2,6 +2,12 @@ import axios, { type AxiosRequestConfig } from "axios";
 import { useManagerStore } from "@/store/manager";
 import { ElMessage, ElNotification } from "element-plus";
 
+declare module "axios" {
+  interface AxiosRequestConfig {
+    showErrorMessage?: boolean;
+  }
+}
+
 export class ApiError extends Error {
   status: number;
   data: ApiErrorData;
@@ -29,7 +35,8 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     // http status code !2xx
-    const { response, message } = error;
+    const { response, message, config } = error;
+
     if (response && response.data) {
       if (response.status === 401 && response.data.code === "TOKEN_INVALID") {
         useManagerStore().clear();
@@ -42,17 +49,16 @@ axiosInstance.interceptors.response.use(
             title: response.status,
             message: errorMsg,
           });
-        } else {
+        } else if (config.showErrorMessage !== false) {
           ElMessage.error(errorMsg);
         }
+        return Promise.reject(
+          new ApiError(errorMsg, response.status, response.data),
+        );
       }
-
-      return Promise.reject(
-        new ApiError(message, response.status, response.data),
-      );
+    } else {
+      return Promise.reject(error);
     }
-
-    return Promise.reject(error);
   },
 );
 

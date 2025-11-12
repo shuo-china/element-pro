@@ -15,6 +15,14 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: "/callback",
+    name: "Callback",
+    component: () => import("@/pages/callback/index.vue"),
+    meta: {
+      hidden: true,
+    },
+  },
+  {
     path: "/exception",
     component: AdminLayout,
     meta: {

@@ -1,5 +1,9 @@
 import { TOKEN_KEY } from "@/utils/constants";
-import { getAccessTokenApi, getCurrentManagerInfoApi } from "@/api/manager";
+import {
+  getAccessTokenByPasswordApi,
+  getAccessTokenByWechatApi,
+  getCurrentManagerInfoApi,
+} from "@/api/manager";
 
 export interface ManagerInfo {
   id: number;
@@ -13,7 +17,11 @@ export const useManagerStore = defineStore("manager", () => {
 
   const hasManagerInfo = computed(() => managerInfo.value !== null);
 
-  const getAccessToken = async (data) => {
+  const getAccessToken = async (type: "wechat" | "password", data) => {
+    const getAccessTokenApi =
+      type === "wechat"
+        ? getAccessTokenByWechatApi
+        : getAccessTokenByPasswordApi;
     const result = await getAccessTokenApi(data);
     token.value = result.access_token;
   };

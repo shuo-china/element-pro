@@ -1,8 +1,9 @@
 <template>
   <dialog-form
-    ref="formRef"
     v-model:visible="visible"
     :form-props="{ model: formData, rules }"
+    :params="id"
+    :request="mode === 'update' ? getDetailInfo : undefined"
     @submit="handleSubmit"
   >
     <el-form-item label="类型" prop="type">
@@ -60,21 +61,28 @@
 </template>
 
 <script setup lang="ts">
-import { createConfigApi } from "@/api/config";
+import {
+  createConfigApi,
+  getConfigDetailApi,
+  updateConfigApi,
+} from "@/api/config";
 import { ElMessage, type FormRules } from "element-plus";
-import { transformSubmitOptions } from "./shared";
+import { transformReceiveOptions, transformSubmitOptions } from "./shared";
 import _ from "lodash";
 import useDict from "@/hooks/useDict";
 
-const emit = defineEmits(["created"]);
+const emit = defineEmits(["created", "updated", "finished"]);
 
-const visible = defineModel("visible", { type: Boolean, default: false });
+const props = defineProps<{
+  mode: "create" | "update";
+  id?: number;
+  groupName?: string;
+}>();
 
 const { dict, dictLoading } = useDict("config_type");
 
-const props = defineProps<{ groupName?: string }>();
+const visible = defineModel("visible", { type: Boolean, default: false });
 
-const formRef = ref();
 const formData = ref({
   type: "",
   title: "",
@@ -88,6 +96,7 @@ const rules: FormRules = {
   options: [
     {
       validator: (_rule, value, callback) => {
+        console.log(value);
         if (value.find((item) => !item.label || !item.value)) {
           callback(new Error("请输入完整的选项"));
         } else if (
@@ -132,7 +141,22 @@ const handleAddSelectOption = () => {
   });
 };
 
+const getDetailInfo = async (params) =>
+  getConfigDetailApi(params).then((res) => ({
+    type: res.type,
+    title: res.title,
+    name: res.name,
+    tips: res.tips,
+    options: transformReceiveOptions(res.options),
+  }));
+
 const handleSubmit = (cb) => {
+  return props.mode === "create"
+    ? handleCreateSubmit(cb)
+    : handleUpdateSubmit(cb);
+};
+
+const handleCreateSubmit = (cb) => {
   createConfigApi({
     ...formData.value,
     group: props.groupName,
@@ -141,6 +165,23 @@ const handleSubmit = (cb) => {
     .then(() => {
       ElMessage.success("提交成功");
       emit("created");
+      emit("finished");
+      cb(true);
+    })
+    .catch(() => {
+      cb(false);
+    });
+};
+
+const handleUpdateSubmit = (cb) => {
+  updateConfigApi(props.id!, {
+    ...formData.value,
+    options: transformSubmitOptions(formData.value.options),
+  })
+    .then(() => {
+      ElMessage.success("提交成功");
+      emit("updated");
+      emit("finished");
       cb(true);
     })
     .catch(() => {

@@ -1,19 +1,18 @@
 <template>
   <el-dialog
+    ref="dialogRef"
     v-model="visible"
     v-bind="dialogProps"
-    @open="handleOpen"
     @closed="handleClosed"
-    destroy-on-close
   >
-    <el-form v-loading="loading" ref="formRef" v-bind="formProps">
+    <el-form ref="formRef" v-loading="requesting" v-bind="formProps">
       <slot />
     </el-form>
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
       <el-button
         type="primary"
-        :disabled="loading"
+        :disabled="requesting"
         :loading="submitting"
         @click="handleConfirm()"
         >确认</el-button
@@ -27,13 +26,21 @@ import type { DialogProps, FormInstance, FormProps } from "element-plus";
 import _ from "lodash";
 
 let initialValues;
+let mountedValues;
+
 const visible = defineModel("visible", { type: Boolean, default: false });
 
-const props = defineProps<{
-  dialogProps?: Partial<DialogProps>;
-  formProps?: Partial<FormProps>;
-  request?: () => Promise<Record<string, any>>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    dialogProps?: Partial<DialogProps>;
+    formProps?: Partial<FormProps>;
+    params?: any;
+    request?: (params?: any) => Promise<Record<string, any>>;
+  }>(),
+  {
+    params: () => ({}),
+  },
+);
 
 const emit = defineEmits<{
   submit: [cb: (result: boolean) => void];
@@ -58,7 +65,7 @@ const formProps = computed(() =>
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
-const loading = ref(false);
+const requesting = ref(false);
 
 const handleConfirm = () => {
   if (!formRef.value) return;
@@ -76,19 +83,25 @@ const handleConfirm = () => {
   });
 };
 
-const handleClosed = () => {
-  submitting.value = false;
-  if (props.formProps?.model) {
-    Object.assign(props.formProps.model, _.cloneDeep(initialValues));
-  }
+const reset = () => {
   formRef.value?.resetFields();
+  // if (props.formProps?.model) {
+  //   Object.assign(props.formProps.model, _.cloneDeep(initialValues));
+  // }
 };
 
-const handleOpen = () => {
-  if (props.request) {
-    loading.value = true;
-    props
-      .request()
+const handleClosed = () => {
+  submitting.value = false;
+  formRef.value?.resetFields();
+  if (props.formProps?.model) {
+    Object.assign(props.formProps.model, _.cloneDeep(mountedValues));
+  }
+};
+
+watch([visible, () => props.request, () => props.params], ([v, r, p]) => {
+  if (v && r) {
+    requesting.value = true;
+    r(p)
       .then((values) => {
         initialValues = values;
         if (props.formProps?.model && visible.value) {
@@ -96,21 +109,20 @@ const handleOpen = () => {
         }
       })
       .finally(() => {
-        loading.value = false;
+        requesting.value = false;
       });
   }
-};
-
-const _expose = {
-  loading,
-};
-
-defineExpose(_expose);
+});
 
 onMounted(() => {
   if (props.formProps?.model) {
+    mountedValues = _.cloneDeep(props.formProps.model);
     initialValues = _.cloneDeep(props.formProps.model);
   }
+});
+
+defineExpose({
+  reset,
 });
 </script>
 

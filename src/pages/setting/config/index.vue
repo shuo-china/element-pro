@@ -116,7 +116,7 @@
         </el-table-column>
         <el-table-column fixed="right" :width="120">
           <template #default="{ row }">
-            <el-button link type="primary" @click="editId = row.id">
+            <el-button link type="primary" @click="handleUpdateConfig(row)">
               编辑
             </el-button>
             <el-popconfirm
@@ -134,17 +134,18 @@
         class="mt-4 mb-3 h-9 w-full border-dashed"
         plain
         icon="Plus"
-        @click="addVisible = true"
+        @click="handleCreateConfig"
         >新增配置</el-button
       >
     </div>
   </page>
-  <add
-    v-model:visible="addVisible"
+  <config-form
+    :mode="mode"
+    :id="editId"
+    v-model:visible="formVisible"
     :group-name="currentTabName"
-    @created="refreshConfigList"
+    @finished="refreshConfigList"
   />
-  <edit v-model:id="editId" @updated="refreshConfigList" />
 </template>
 
 <script setup lang="ts">
@@ -156,8 +157,7 @@ import {
   type ConfigItem,
 } from "@/api/config";
 import useRequest from "@/hooks/useRequest";
-import Add from "./Add.vue";
-import Edit from "./Edit.vue";
+import ConfigForm from "./ConfigForm.vue";
 import {
   transformReceiveValue,
   transformSubmitValue,
@@ -168,8 +168,21 @@ import { useConfigStore } from "@/store/config";
 const configStore = useConfigStore();
 
 const { copy } = useClipboard();
-const addVisible = ref(false);
-const editId = ref(0);
+const formVisible = ref(false);
+const editId = ref<number>();
+const mode = ref<"create" | "update">("create");
+
+const handleCreateConfig = () => {
+  formVisible.value = true;
+  editId.value = undefined;
+  mode.value = "create";
+};
+
+const handleUpdateConfig = (row) => {
+  formVisible.value = true;
+  editId.value = row.id;
+  mode.value = "update";
+};
 
 const currentTabName = ref();
 const { data: groups, loading: groupLoading } = useRequest(getConfigGroupsApi, {

@@ -4,7 +4,7 @@ import { useConfigStore } from "@/store/config";
 import { useManagerStore } from "@/store/manager";
 import { useMenuStore } from "@/store/menu";
 
-const whiteList = ["Login"];
+const whiteList = ["Login", "Callback"];
 
 router.beforeEach(async (to, _from, next) => {
   const configStore = useConfigStore();

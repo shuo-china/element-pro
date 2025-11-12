@@ -9,12 +9,20 @@ interface ManagerInfoResponseData {
   };
 }
 
-export function getAccessTokenApi(data: {
+export function getAccessTokenByPasswordApi(data: {
   username: string;
   password: string;
 }) {
   return request<{ access_token: string }>({
     url: "/login/tokens",
+    method: "post",
+    data,
+  });
+}
+
+export function getAccessTokenByWechatApi(data: { code: string }) {
+  return request<{ access_token: string }>({
+    url: "/tokens",
     method: "post",
     data,
   });
@@ -42,6 +50,41 @@ export function createManagerApi(
 ) {
   return request({
     url: "/managers",
+    method: "post",
+    data,
+    ...options,
+  });
+}
+
+export function getManagerDetailApi(id: number, options?: AxiosRequestConfig) {
+  return request({
+    url: `/manager/${id}`,
+    method: "get",
+    ...options,
+  });
+}
+
+export function updateManagerApi(id: number, data: Record<string, any>) {
+  return request({
+    url: `/managers/${id}`,
+    method: "patch",
+    data,
+  });
+}
+
+export function deleteManagerApi(id: number) {
+  return request({
+    url: `/managers/${id}`,
+    method: "delete",
+  });
+}
+
+export function bindWechatApi(
+  data: Record<string, any>,
+  options?: AxiosRequestConfig,
+) {
+  return request({
+    url: "/manager/bind",
     method: "post",
     data,
     ...options,

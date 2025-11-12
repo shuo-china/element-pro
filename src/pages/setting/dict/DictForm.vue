@@ -1,8 +1,9 @@
 <template>
   <dialog-form
-    ref="formRef"
     v-model:visible="visible"
     :form-props="{ model: formData, rules }"
+    :params="id"
+    :request="mode === 'update' ? getDetailInfo : undefined"
     @submit="handleSubmit"
   >
     <el-form-item label="字典名称" prop="dict_name">
@@ -23,25 +24,18 @@
 </template>
 
 <script setup lang="ts">
-import { getDictDetailApi, updateDictApi } from "@/api/dict";
+import { createDictApi, getDictDetailApi, updateDictApi } from "@/api/dict";
 import { ElMessage, type FormRules } from "element-plus";
 
-const emit = defineEmits(["updated"]);
+const emit = defineEmits(["created", "updated", "finished"]);
 
-const id = defineModel("id", { type: Number, default: 0 });
+const props = defineProps<{
+  mode: "create" | "update";
+  id?: number;
+}>();
 
-const visible = computed({
-  get: () => {
-    return !!id.value;
-  },
-  set: (val) => {
-    if (!val) {
-      id.value = 0;
-    }
-  },
-});
+const visible = defineModel("visible", { type: Boolean, default: false });
 
-const formRef = ref();
 const formData = ref({
   dict_name: "",
   dict_type: "",
@@ -53,31 +47,45 @@ const rules: FormRules = {
   dict_type: [{ required: true, message: "请填写字典key" }],
 };
 
-const setInitialValues = (id: number) => {
-  if (!id) {
-    return;
-  }
-  formRef.value.loading = true;
-  getDictDetailApi(id).then((res) => {
-    formRef.value.loading = false;
-    formData.value = {
-      dict_name: res.dict_name,
-      dict_type: res.dict_type,
-      status: res.status === 1,
-    };
-  });
-};
-watch(id, setInitialValues);
+const getDetailInfo = async (params) =>
+  getDictDetailApi(params).then((res) => ({
+    dict_name: res.dict_name,
+    dict_type: res.dict_type,
+    status: res.status === 1,
+  }));
 
 const handleSubmit = (cb) => {
+  return props.mode === "create"
+    ? handleCreateSubmit(cb)
+    : handleUpdateSubmit(cb);
+};
+
+const handleCreateSubmit = (cb) => {
+  createDictApi({
+    ...formData.value,
+    status: formData.value.status ? 1 : 0,
+  })
+    .then(() => {
+      ElMessage.success("提交成功");
+      emit("created");
+      emit("finished");
+      cb(true);
+    })
+    .catch(() => {
+      cb(false);
+    });
+};
+
+const handleUpdateSubmit = (cb) => {
   updateDictApi({
-    id: id.value,
+    id: props.id,
     ...formData.value,
     status: formData.value.status ? 1 : 0,
   })
     .then(() => {
       ElMessage.success("提交成功");
       emit("updated");
+      emit("finished");
       cb(true);
     })
     .catch(() => {
