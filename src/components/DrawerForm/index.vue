@@ -48,6 +48,8 @@ const emit = defineEmits<{
 
 const defaultDrawerProps: Partial<DrawerProps> = {
   size: "800px",
+  bodyClass: "px-6",
+  footerClass: "px-6",
 };
 
 const drawerProps = computed(() =>
@@ -55,7 +57,7 @@ const drawerProps = computed(() =>
 );
 
 const defaultFormProps: Partial<FormProps> = {
-  labelPosition: "left",
+  labelPosition: "top",
 };
 
 const formProps = computed(() =>
@@ -122,6 +124,7 @@ onMounted(() => {
 
 defineExpose({
   reset,
+  getFormInstance: () => formRef.value,
 });
 </script>
 

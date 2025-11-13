@@ -118,6 +118,7 @@ onMounted(() => {
 
 defineExpose({
   reset,
+  getFormInstance: () => formRef.value,
 });
 </script>
 

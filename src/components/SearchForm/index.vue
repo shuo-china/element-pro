@@ -44,7 +44,7 @@ import { breakpointsElement } from "@vueuse/core";
 import type { FormInstance, FormProps } from "element-plus";
 
 defineProps<{
-  formProps?: FormProps;
+  formProps?: Partial<FormProps>;
 }>();
 
 const emit = defineEmits(["search", "reset"]);

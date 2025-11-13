@@ -147,6 +147,9 @@ const handleBeforeUpload = (rawFile: UploadRawFile) => {
 };
 
 const transformFileList = (files: FileItem[]) => {
+  if (!Array.isArray(files)) {
+    return [];
+  }
   files.forEach((file) => {
     if (!file.url && file.path) {
       file.url = file.path;

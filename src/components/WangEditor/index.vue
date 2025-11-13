@@ -1,6 +1,6 @@
 <template>
   <div
-    class="wang-editor-wrapper flex h-full flex-col overflow-hidden rounded border border-black/15"
+    class="wang-editor-wrapper flex flex-col overflow-hidden rounded border border-black/15"
   >
     <toolbar
       :editor="editorRef"
