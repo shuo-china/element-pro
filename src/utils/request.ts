@@ -46,7 +46,7 @@ axiosInstance.interceptors.response.use(
         if (response.status >= 500) {
           ElNotification({
             type: "error",
-            title: response.status,
+            title: response.status + "",
             message: errorMsg,
           });
         } else if (config.showErrorMessage !== false) {

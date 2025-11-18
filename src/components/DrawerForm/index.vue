@@ -5,7 +5,12 @@
     @closed="handleClosed"
     class="drawer-form-container max-w-full"
   >
-    <el-form ref="formRef" v-loading="requesting" v-bind="formProps">
+    <el-form
+      ref="formRef"
+      v-loading="requesting"
+      @submit.prevent
+      v-bind="formProps"
+    >
       <slot />
     </el-form>
     <template #footer>
@@ -129,9 +134,7 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-.drawer-form-container {
-  :global(.el-drawer__header) {
-    margin-bottom: 0;
-  }
+:global(.drawer-form-container .el-drawer__header) {
+  margin-bottom: 0;
 }
 </style>

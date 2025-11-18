@@ -1,6 +1,11 @@
 <template>
   <el-dialog v-model="visible" v-bind="dialogProps" @closed="handleClosed">
-    <el-form ref="formRef" v-loading="requesting" v-bind="formProps">
+    <el-form
+      ref="formRef"
+      v-loading="requesting"
+      @submit.prevent
+      v-bind="formProps"
+    >
       <slot />
     </el-form>
     <template #footer>

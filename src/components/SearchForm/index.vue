@@ -1,6 +1,6 @@
 <template>
   <div class="mb-6">
-    <el-form ref="formRef" label-suffix=":" v-bind="formProps">
+    <el-form ref="formRef" label-suffix=":" @submit.prevent v-bind="formProps">
       <el-row :gutter="48" class="gap-y-6">
         <el-col
           v-for="(vnode, index) in $slots.default?.()"

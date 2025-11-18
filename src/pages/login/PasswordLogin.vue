@@ -78,7 +78,7 @@ const handleSubmit = () => {
             ElMessage.success("登录成功");
           });
         })
-        .finally(() => {
+        .catch(() => {
           loading.value = false;
         });
     }
