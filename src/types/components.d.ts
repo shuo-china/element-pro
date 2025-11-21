@@ -8,7 +8,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActionGroup: typeof import('./../components/ActionGroup/index.vue')['default']
+    ActionItem: typeof import('./../components/ActionGroup/ActionItem.vue')['default']
     DialogForm: typeof import('./../components/DialogForm/index.vue')['default']
+    DrawerForm: typeof import('./../components/DrawerForm/index.vue')['default']
     Page: typeof import('./../components/Page/index.vue')['default']
     ProTable: typeof import('./../components/ProTable/index.vue')['default']
     ProUpload: typeof import('./../components/ProUpload/index.vue')['default']

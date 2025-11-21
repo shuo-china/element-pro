@@ -125,14 +125,9 @@
             <el-button link type="primary" @click="handleUpdateConfig(row)">
               编辑
             </el-button>
-            <el-popconfirm
-              title="确定要删除吗？"
-              @confirm="handleDeleteConfig(row.id)"
+            <el-button link type="danger" @click="handleDeleteConfig(row.id)"
+              >删除</el-button
             >
-              <template #reference>
-                <el-button link type="danger">删除</el-button>
-              </template>
-            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -170,6 +165,7 @@ import {
   transformReceiveOptions,
 } from "./shared";
 import { useConfigStore } from "@/store/config";
+import { ElMessageBox } from "element-plus";
 
 const configStore = useConfigStore();
 
@@ -227,7 +223,15 @@ const handleUpdateConfigValue = (item: ConfigItem) => {
 };
 
 const handleDeleteConfig = (id: number) => {
-  deleteConfigApi(id).then(refreshConfigList);
+  ElMessageBox.confirm("确定要删除吗？", {
+    type: "warning",
+  })
+    .then(() => {
+      return deleteConfigApi(id);
+    })
+    .then(() => {
+      refreshConfigList();
+    });
 };
 </script>
 

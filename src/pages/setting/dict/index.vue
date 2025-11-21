@@ -41,14 +41,11 @@
               icon="Edit"
               @click.stop="handleUpdateDict(item)"
             ></el-button>
-            <el-popconfirm
-              title="确定要删除吗?"
-              @confirm="handleDeleteDict(item.id)"
-            >
-              <template #reference>
-                <el-button size="small" icon="Delete" @click.stop></el-button>
-              </template>
-            </el-popconfirm>
+            <el-button
+              size="small"
+              icon="Delete"
+              @click.stop="handleDeleteDict(item.id)"
+            ></el-button>
           </div>
         </div>
       </el-card>
@@ -106,6 +103,7 @@ import {
 import useRequest from "@/hooks/useRequest";
 import DictForm from "./DictForm.vue";
 import DictValForm from "./DictValForm.vue";
+import { ElMessageBox } from "element-plus";
 
 const { data: dictList, refresh: refreshDictList } = useRequest(getDictListApi);
 const {
@@ -141,7 +139,15 @@ const handleUpdateDict = (item) => {
 };
 
 const handleDeleteDict = (id: number) => {
-  deleteDictApi(id).then(() => refreshDictList());
+  ElMessageBox.confirm("确定要删除吗？", {
+    type: "warning",
+  })
+    .then(() => {
+      return deleteDictApi(id);
+    })
+    .then(() => {
+      refreshDictList();
+    });
 };
 
 const dictValFormVisible = ref(false);

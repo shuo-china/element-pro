@@ -3,7 +3,7 @@ export const BOOLEAN_OPTIONS = [
   { label: "否", value: 0 },
 ];
 
-export function getOptionItemByValue(options: OptionItem[], value: any) {
+export function getOptionItemByValue(options: (OptionItem & Record<string, any>)[],, value: any) {
   return options.find((item) => item.value === value);
 }
 
