@@ -1,10 +1,11 @@
-import axios, { type AxiosRequestConfig } from "axios";
+import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
 import { useManagerStore } from "@/store/manager";
 import { ElMessage, ElNotification } from "element-plus";
 
 declare module "axios" {
   interface AxiosRequestConfig {
     showErrorMessage?: boolean;
+    returnFullResponse?: boolean;
   }
 }
 
@@ -62,8 +63,18 @@ axiosInstance.interceptors.response.use(
   },
 );
 
-function request<T = any, R = any>(config: AxiosRequestConfig<R>): Promise<T> {
-  return axiosInstance(config).then((res) => res.data);
+function request<T = any, R = any>(
+  config: AxiosRequestConfig<R> & { returnFullResponse: true },
+): Promise<AxiosResponse<T>>;
+
+function request<T = any, R = any>(config: AxiosRequestConfig<R>): Promise<T>;
+
+function request<T = any, R = any>(
+  config: AxiosRequestConfig<R>,
+): Promise<T | AxiosResponse<T>> {
+  return axiosInstance(config).then((res) =>
+    config.returnFullResponse ? res : res.data,
+  );
 }
 
 export default request;

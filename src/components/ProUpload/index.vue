@@ -42,7 +42,7 @@ import {
   type UploadRequestOptions,
   type UploadUserFile,
 } from "element-plus";
-import { uploadApi, type UploadResponseData } from "@/api/upload";
+import { uploadApi, type UploadResponseData } from "@/api/file";
 import { useConfigStore } from "@/store/config";
 
 type FileItem = UploadUserFile & { key: string; path?: string };

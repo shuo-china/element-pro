@@ -21,7 +21,7 @@
 import "@wangeditor/editor/dist/css/style.css";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import type { IEditorConfig } from "@wangeditor/editor";
-import { uploadApi } from "@/api/upload";
+import { uploadApi } from "@/api/file";
 
 const mode = "default";
 
