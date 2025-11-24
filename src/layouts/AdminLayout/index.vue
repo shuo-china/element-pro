@@ -40,7 +40,7 @@
           </el-menu>
         </el-scrollbar>
       </el-aside>
-      <el-main class="bg-[#f0f2f5] p-6">
+      <el-main class="bg-[#f0f2f5] p-0">
         <router-view></router-view>
       </el-main>
     </el-container>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full gap-x-6">
+  <div class="flex h-full gap-x-6 p-6">
     <el-card
       class="flex-1 overflow-auto"
       body-class="flex flex-wrap gap-6"
