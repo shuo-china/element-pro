@@ -18,7 +18,8 @@
     @preview="handlePreview"
   >
     <template #default>
-      <el-button icon="Upload">上传</el-button>
+      <el-icon v-if="type === 'image'" :size="26"><Plus /></el-icon>
+      <el-button v-else icon="Upload">上传</el-button>
     </template>
     <template #tip v-if="showTip">
       <div class="mt-1.5 text-xs text-black/50">

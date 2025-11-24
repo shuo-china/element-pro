@@ -48,7 +48,7 @@ function getFileNameFromHeaders(
   return fileName || defaultName;
 }
 
-export function downloadApi(url: string, params: Record<string, any>) {
+export function downloadApi(url: string, params?: Record<string, any>) {
   return request<number>({
     url,
     params,
