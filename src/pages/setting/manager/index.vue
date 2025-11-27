@@ -12,12 +12,14 @@
       <el-table-column label="角色">
         <template #default="{ row }">
           <div class="flex flex-wrap gap-2">
-            <el-tag v-for="item in row.roles">{{ item.name }}</el-tag>
+            <el-tag v-for="item in row.roles" effect="plain">{{
+              item.name
+            }}</el-tag>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="create_time" label="创建时间" />
-      <el-table-column label="操作" fixed="right" :width="220">
+      <el-table-column label="操作" fixed="right" :width="170">
         <template #default="{ row }">
           <action-group>
             <action-item>

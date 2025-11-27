@@ -2,7 +2,12 @@
   <el-container class="h-full">
     <el-header class="flex h-15 items-center border-b border-black/15">
       <div class="h-8 w-47">
-        <img class="h-full" :src="config?.base.logo" alt="logo" />
+        <img
+          class="h-full cursor-pointer"
+          :src="config?.base.logo"
+          alt="logo"
+          @click="router.push('/')"
+        />
       </div>
       <el-menu
         router
