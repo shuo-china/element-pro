@@ -7,16 +7,12 @@
       <div class="flex flex-col px-8 py-6">
         <div class="mt-6 text-center">
           <div class="flex items-center justify-center">
-            <img
-              class="w-11"
-              src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
-              alt="logo"
-            />
-            <span class="ml-4 text-3xl font-bold">{{
+            <img class="h-12" :src="config?.base.logo" alt="logo" />
+            <!-- <span class="ml-4 text-3xl font-bold">{{
               config?.base.title
-            }}</span>
+            }}</span> -->
           </div>
-          <div class="mt-3 mb-6 text-sm text-black/50">
+          <div class="my-3 mt-5 text-sm text-black/50">
             {{ config?.base.description }}
           </div>
         </div>

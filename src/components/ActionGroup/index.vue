@@ -1,84 +1,107 @@
-<template>
-  <div class="flex items-center">
-    <template v-for="(node, index) in visibleNodes" :key="index">
-      <component :is="node" />
-      <el-divider
-        v-if="index < visibleNodes.length - 1 || dropdownNodes.length > 0"
-        direction="vertical"
-      />
-    </template>
-    <!-- 更多 -->
-    <el-dropdown v-if="dropdownNodes.length > 0">
-      <el-button link type="primary" class="outline-none">
-        更多<el-icon><arrow-down /></el-icon>
-      </el-button>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <component
-            v-for="(node, index) in dropdownNodes"
-            :key="index"
-            :is="node"
-          />
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
-  </div>
-</template>
+<script lang="ts">
+import { defineComponent, h, Fragment, isVNode, cloneVNode } from "vue";
+import {
+  ElDivider,
+  ElDropdown,
+  ElDropdownMenu,
+  ElButton,
+  ElIcon,
+} from "element-plus";
+import { ArrowDown } from "@element-plus/icons-vue";
 
-<script setup lang="ts">
-import { Fragment, isVNode, cloneVNode } from "vue";
+export default defineComponent({
+  name: "ActionGroup",
+  props: {
+    max: { type: Number, default: 3 },
+  },
+  setup(props, { slots }) {
+    const getValidNodes = (nodes: VNode[]): VNode[] => {
+      let result: VNode[] = [];
 
-const props = defineProps({
-  max: { type: Number, default: 3 },
-});
+      nodes.forEach((node) => {
+        if (node.type === Fragment && Array.isArray(node.children)) {
+          result.push(...getValidNodes(node.children as VNode[]));
+          return;
+        }
 
-const slots = useSlots();
+        if (!isVNode(node)) {
+          return;
+        }
 
-const getValidNodes = (nodes: VNode[]): VNode[] => {
-  let result: VNode[] = [];
+        const componentType = node.type as any;
+        if (
+          typeof componentType === "object" &&
+          componentType.name === "ActionItem"
+        ) {
+          result.push(node);
+        }
+      });
 
-  nodes.forEach((node) => {
-    if (node.type === Fragment && Array.isArray(node.children)) {
-      result.push(...getValidNodes(node.children as VNode[]));
-      return;
-    }
+      return result;
+    };
 
-    if (!isVNode(node)) {
-      return;
-    }
+    return () => {
+      if (!slots.default) return null;
 
-    const componentType = node.type as any;
-    if (
-      typeof componentType === "object" &&
-      componentType.name === "ActionItem"
-    ) {
-      result.push(node);
-    }
-  });
+      const allNodes = getValidNodes(slots.default());
 
-  return result;
-};
+      let visibleNodes: VNode[] = [];
+      let dropdownNodes: VNode[] = [];
 
-const allNodes = computed(() => {
-  if (!slots.default) return [];
-  return getValidNodes(slots.default());
-});
+      if (allNodes.length <= props.max) {
+        visibleNodes = allNodes.map((node) =>
+          cloneVNode(node, { _isDropdown: false }),
+        );
+      } else {
+        visibleNodes = allNodes
+          .slice(0, props.max - 1)
+          .map((node) => cloneVNode(node, { _isDropdown: false }));
+        dropdownNodes = allNodes
+          .slice(props.max - 1)
+          .map((node) => cloneVNode(node, { _isDropdown: true }));
+      }
 
-const visibleNodes = computed(() => {
-  const nodes = allNodes.value;
-  if (nodes.length <= props.max) {
-    return nodes.map((node) => cloneVNode(node, { _isDropdown: false }));
-  }
-  return nodes
-    .slice(0, props.max - 1)
-    .map((node) => cloneVNode(node, { _isDropdown: false }));
-});
+      const children: VNode[] = [];
 
-const dropdownNodes = computed(() => {
-  const nodes = allNodes.value;
-  if (nodes.length <= props.max) return [];
-  return nodes
-    .slice(props.max - 1)
-    .map((node) => cloneVNode(node, { _isDropdown: true }));
+      visibleNodes.forEach((node, index) => {
+        children.push(node);
+        if (index < visibleNodes.length - 1 || dropdownNodes.length > 0) {
+          children.push(h(ElDivider, { direction: "vertical" }));
+        }
+      });
+
+      if (dropdownNodes.length > 0) {
+        children.push(
+          h(
+            ElDropdown,
+            {},
+            {
+              default: () =>
+                h(
+                  ElButton,
+                  { link: true, type: "primary", class: "outline-none" },
+                  {
+                    default: () => [
+                      "更多",
+                      h(ElIcon, null, { default: () => h(ArrowDown) }),
+                    ],
+                  },
+                ),
+              dropdown: () =>
+                h(
+                  ElDropdownMenu,
+                  {},
+                  {
+                    default: () => dropdownNodes,
+                  },
+                ),
+            },
+          ),
+        );
+      }
+
+      return h("div", { class: "flex items-center" }, children);
+    };
+  },
 });
 </script>

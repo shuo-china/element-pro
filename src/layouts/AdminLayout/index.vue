@@ -1,7 +1,7 @@
 <template>
   <el-container class="h-full">
     <el-header class="flex h-15 items-center border-b border-black/15">
-      <div class="h-8 w-47">
+      <div class="h-8 w-47 shrink-0 grow-0">
         <img
           class="h-full cursor-pointer"
           :src="config?.base.logo"
@@ -9,15 +9,17 @@
           @click="router.push('/')"
         />
       </div>
-      <el-menu
-        router
-        :default-active="topActiveKey"
-        mode="horizontal"
-        class="h-full flex-1"
-      >
-        <MenuItem v-for="item in topMenus" :menu="item" />
-      </el-menu>
-      <el-dropdown class="h-full">
+      <div class="h-full flex-1 overflow-hidden">
+        <el-menu
+          router
+          :default-active="topActiveKey"
+          mode="horizontal"
+          class="h-full"
+        >
+          <MenuItem v-for="item in topMenus" :menu="item" />
+        </el-menu>
+      </div>
+      <el-dropdown class="h-full shrink-0 grow-0">
         <div
           class="flex cursor-pointer items-center px-3 outline-none hover:bg-black/3"
         >
