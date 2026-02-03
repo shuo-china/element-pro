@@ -1,24 +1,14 @@
 <template>
-  <el-upload
-    ref="uploadRef"
-    :multiple="multiple"
-    :file-list="fileList"
-    :class="{
-      disabled: fileList.length >= uploadProps.limit!,
-      empty: fileList.length === 0,
-    }"
-    v-bind="uploadProps"
-    :before-upload="handleBeforeUpload"
-    :http-request="handleHttpRequest"
-    @update:file-list="handleUpdateFileList"
-    @success="handleSuccess"
-    @error="handleError"
-    @exceed="handleExceed"
-    @remove="handleRemove"
-    @preview="handlePreview"
-  >
+  <el-upload ref="uploadRef" :multiple="multiple" :file-list="fileList" :class="{
+    disabled: fileList.length >= uploadProps.limit!,
+    empty: fileList.length === 0,
+  }" v-bind="uploadProps" :before-upload="handleBeforeUpload" :http-request="handleHttpRequest"
+    @update:file-list="handleUpdateFileList" @success="handleSuccess" @error="handleError" @exceed="handleExceed"
+    @remove="handleRemove" @preview="handlePreview">
     <template #default>
-      <el-icon v-if="type === 'image'" :size="26"><Plus /></el-icon>
+      <el-icon v-if="type === 'image'" :size="26">
+        <Plus />
+      </el-icon>
       <el-button v-else icon="Upload">上传</el-button>
     </template>
     <template #tip v-if="showTip">
@@ -57,7 +47,7 @@ const props = withDefaults(
   defineProps<{
     type?: "image" | "file";
     modelValue?: string;
-    fileList?: FileItem[];
+    fileList?: FileItem | FileItem[];
     showTip?: boolean;
     uploadProps?: Partial<UploadProps>;
     config?: {
@@ -147,23 +137,22 @@ const handleBeforeUpload = (rawFile: UploadRawFile) => {
   return true;
 };
 
-const transformFileList = (files: FileItem[]) => {
-  if (!Array.isArray(files)) {
-    return [];
-  }
-  files.forEach((file) => {
+const transformFileList = (files: FileItem[] | FileItem) => {
+  const list = Array.isArray(files) ? files : files ? [files] : [];
+  list.forEach((file) => {
     if (!file.url && file.path) {
       file.url = file.path;
     }
   });
-  return files;
+  return list;
 };
 
 const fileList = ref<FileItem[]>(transformFileList(props.fileList) || []);
 
 const handleUpdateFileList = (newVal: FileItem[]) => {
   fileList.value = newVal;
-  emit("update:file-list", newVal);
+  const external = multiple.value ? newVal : newVal[0];
+  emit("update:file-list", external);
 };
 
 watch(

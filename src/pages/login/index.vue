@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="flex h-full flex-col"
-    :style="{ backgroundImage: `url(${bg})`, backgroundSize: '100% 100%' }"
-  >
+  <div class="flex h-full flex-col" :style="{ backgroundImage: `url(${bg})`, backgroundSize: '100% 100%' }">
     <div class="flex-1 py-8">
       <div class="flex flex-col px-8 py-6">
         <div class="mt-6 text-center">
@@ -18,16 +15,10 @@
         </div>
         <div class="mx-auto w-80 max-w-[75vw]">
           <el-tabs class="login-type-tabs">
-            <el-tab-pane
-              v-if="config?.base.loginType.includes('password')"
-              label="账号密码登录"
-            >
+            <el-tab-pane v-if="config?.base.loginType?.includes('password')" label="账号密码登录">
               <password-login />
             </el-tab-pane>
-            <el-tab-pane
-              v-if="config?.base.loginType.includes('wechat')"
-              label="微信扫码登录"
-            >
+            <el-tab-pane v-if="config?.base.loginType?.includes('wechat')" label="微信扫码登录">
               <wechat-login />
             </el-tab-pane>
           </el-tabs>

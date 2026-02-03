@@ -1,4 +1,4 @@
-import { getInitialConfigApi } from "@/api/config";
+import { getConfigInitApi } from "@/api/config_group";
 
 interface Config {
   base: {
@@ -36,35 +36,35 @@ export const useConfigStore = defineStore("config", () => {
   });
 
   const init = () => {
-    return getInitialConfigApi().then((res) => {
+    return getConfigInitApi().then((res) => {
       config.value = {
         base: {
-          title: res.base.web_site_title,
-          description: res.base.web_site_description,
-          copyright: res.base.web_site_copyright,
-          logo: res.base.web_site_logo,
-          layout: res.base.web_site_layout,
-          loginType: res.base.web_site_login_type,
+          title: res.base?.web_site_title,
+          description: res.base?.web_site_description,
+          copyright: res.base?.web_site_copyright,
+          logo: res.base?.web_site_logo,
+          layout: res.base?.web_site_layout,
+          loginType: res.base?.web_site_login_type,
         },
         pagination: {
-          defaultPageSize: res.pagination.default_page_size,
-          requestPageKey: res.pagination.request_page_key,
-          requestPageSizeKey: res.pagination.request_page_size_key,
-          responseTotalKey: res.pagination.response_total_key,
-          responseDataKey: res.pagination.response_data_key,
+          defaultPageSize: res.pagination?.default_page_size,
+          requestPageKey: res.pagination?.request_page_key,
+          requestPageSizeKey: res.pagination?.request_page_size_key,
+          responseTotalKey: res.pagination?.response_total_key,
+          responseDataKey: res.pagination?.response_data_key,
         },
         upload: {
           image: {
-            limitExt: res.upload.upload_image_ext,
-            limitSize: res.upload.upload_image_size,
+            limitExt: res.upload?.upload_image_ext,
+            limitSize: res.upload?.upload_image_size,
           },
           file: {
-            limitExt: res.upload.upload_file_ext,
-            limitSize: res.upload.upload_file_size,
+            limitExt: res.upload?.upload_file_ext,
+            limitSize: res.upload?.upload_file_size,
           },
         },
         wechat: {
-          appid: res.wechat_login.wechat_login_appid,
+          appid: res.wechat_login?.wechat_login_appid,
         },
       };
     });

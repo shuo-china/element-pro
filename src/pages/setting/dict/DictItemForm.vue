@@ -1,30 +1,24 @@
 <template>
-  <dialog-form
-    v-model:visible="visible"
-    :form-props="{ model: formData, rules }"
-    :params="id"
-    :request="mode === 'update' ? getDetailInfo : undefined"
-    @submit="handleSubmit"
-  >
-    <el-form-item label="字典名称" prop="dict_name">
-      <el-input v-model="formData.dict_name"></el-input>
+  <dialog-form v-model:visible="visible" :form-props="{ model: formData, rules }" :params="id"
+    :request="mode === 'update' ? getDetailInfo : undefined" @submit="handleSubmit">
+    <el-form-item label="名称" prop="name">
+      <el-input v-model="formData.name"></el-input>
     </el-form-item>
-    <el-form-item label="字典key" prop="dict_type">
-      <el-input v-model="formData.dict_type"></el-input>
+    <el-form-item label="值" prop="value">
+      <el-input v-model="formData.value"></el-input>
     </el-form-item>
     <el-form-item label="状态" prop="status">
-      <el-switch
-        v-model="formData.status"
-        inline-prompt
-        active-text="启用"
-        inactive-text="禁用"
-      />
+      <el-switch v-model="formData.status" inline-prompt active-text="启用" inactive-text="禁用" />
     </el-form-item>
   </dialog-form>
 </template>
 
 <script setup lang="ts">
-import { createDictApi, getDictDetailApi, updateDictApi } from "@/api/dict";
+import {
+  createDictItemApi,
+  getDictItemDetailApi,
+  updateDictItemApi,
+} from "@/api/dict_item";
 import { ElMessage, type FormRules } from "element-plus";
 
 const emit = defineEmits(["created", "updated", "finished"]);
@@ -32,25 +26,26 @@ const emit = defineEmits(["created", "updated", "finished"]);
 const props = defineProps<{
   mode: "create" | "update";
   id?: number;
+  typeId?: number;
 }>();
 
 const visible = defineModel("visible", { type: Boolean, default: false });
 
 const formData = ref({
-  dict_name: "",
-  dict_type: "",
+  name: "",
+  value: "",
   status: true,
 });
 
 const rules: FormRules = {
-  dict_name: [{ required: true, message: "请填写字典名称" }],
-  dict_type: [{ required: true, message: "请填写字典key" }],
+  name: [{ required: true, message: "请填写名称" }],
+  value: [{ required: true, message: "请填写值" }],
 };
 
 const getDetailInfo = async (params) =>
-  getDictDetailApi(params).then((res) => ({
-    dict_name: res.dict_name,
-    dict_type: res.dict_type,
+  getDictItemDetailApi(params).then((res) => ({
+    name: res.name,
+    value: res.value,
     status: res.status === 1,
   }));
 
@@ -61,9 +56,9 @@ const handleSubmit = (cb) => {
 };
 
 const handleCreateSubmit = (cb) => {
-  createDictApi({
+  createDictItemApi({
+    type_id: props.typeId,
     ...formData.value,
-    status: formData.value.status ? 1 : 0,
   })
     .then(() => {
       ElMessage.success("提交成功");
@@ -77,7 +72,7 @@ const handleCreateSubmit = (cb) => {
 };
 
 const handleUpdateSubmit = (cb) => {
-  updateDictApi({
+  updateDictItemApi({
     id: props.id,
     ...formData.value,
     status: formData.value.status ? 1 : 0,

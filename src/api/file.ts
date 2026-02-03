@@ -14,7 +14,7 @@ export function uploadApi(file: File, options?: AxiosRequestConfig) {
   form.append("file", file);
 
   return request<UploadResponseData>({
-    url: "/files",
+    url: "/file/upload",
     method: "post",
     data: form,
     headers: {

@@ -2,46 +2,56 @@ import request from "@/utils/request";
 import type { AxiosRequestConfig } from "axios";
 
 interface ManagerInfoResponseData {
-  base_info: {
-    id: number;
-    nickname: string;
-    roles: string[];
-    is_top: number;
-  };
+  id: number;
+  nickname: string;
+  roles: string[];
+  is_top: number;
 }
 
-export function getAccessTokenByPasswordApi(data: {
-  username: string;
-  password: string;
-}) {
+export function getAccessTokenByPasswordApi(
+  data: {
+    username: string;
+    password: string;
+  },
+  options?: AxiosRequestConfig,
+) {
   return request<{ access_token: string }>({
-    url: "/login/tokens",
+    url: "/access/createTokenByPassword",
     method: "post",
     data,
+    ...options,
   });
 }
 
-export function getAccessTokenByWechatApi(data: { code: string }) {
+export function getAccessTokenByWechatApi(
+  data: { code: string },
+  options?: AxiosRequestConfig,
+) {
   return request<{ access_token: string }>({
-    url: "/tokens",
+    url: "/access/createTokenByWechat",
     method: "post",
     data,
+    ...options,
   });
 }
 
 export function getCurrentManagerInfoApi(options?: AxiosRequestConfig) {
   return request<ManagerInfoResponseData>({
-    url: "/manager",
+    url: "/manager/currentManager",
     method: "get",
     ...options,
   });
 }
 
-export function getManagerPaginationApi(params?: Record<string, any>) {
+export function getManagerPaginationApi(
+  params?: Record<string, any>,
+  options?: AxiosRequestConfig,
+) {
   return request<Pagination<ManagerInfoResponseData>>({
-    url: "/search/managers",
+    url: "/manager/pagination",
     method: "get",
     params,
+    ...options,
   });
 }
 
@@ -50,7 +60,7 @@ export function createManagerApi(
   options?: AxiosRequestConfig,
 ) {
   return request({
-    url: "/managers",
+    url: "/manager/create",
     method: "post",
     data,
     ...options,
@@ -59,24 +69,31 @@ export function createManagerApi(
 
 export function getManagerDetailApi(id: number, options?: AxiosRequestConfig) {
   return request({
-    url: `/manager/${id}`,
+    url: `/manager/detail`,
     method: "get",
+    params: { id },
     ...options,
   });
 }
 
-export function updateManagerApi(id: number, data: Record<string, any>) {
+export function updateManagerApi(
+  data: Record<string, any>,
+  options?: AxiosRequestConfig,
+) {
   return request({
-    url: `/managers/${id}`,
+    url: `/manager/update`,
     method: "patch",
     data,
+    ...options,
   });
 }
 
-export function deleteManagerApi(id: number) {
+export function deleteManagerApi(id: number, options?: AxiosRequestConfig) {
   return request({
-    url: `/managers/${id}`,
+    url: `/manager/delete`,
     method: "delete",
+    params: { id },
+    ...options,
   });
 }
 
@@ -85,7 +102,18 @@ export function bindWechatApi(
   options?: AxiosRequestConfig,
 ) {
   return request({
-    url: "/manager/bind",
+    url: "/manager/bindWechat",
+    method: "post",
+    data,
+    ...options,
+  });
+}
+export function unBindWechatApi(
+  data: Record<string, any>,
+  options?: AxiosRequestConfig,
+) {
+  return request({
+    url: "/manager/unBindWechat",
     method: "post",
     data,
     ...options,

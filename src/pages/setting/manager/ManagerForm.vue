@@ -1,11 +1,6 @@
 <template>
-  <dialog-form
-    v-model:visible="visible"
-    :form-props="{ model: formData, rules }"
-    :params="id"
-    :request="mode === 'update' ? getDetailInfo : undefined"
-    @submit="handleSubmit"
-  >
+  <dialog-form v-model:visible="visible" :form-props="{ model: formData, rules }" :params="id"
+    :request="mode === 'update' ? getDetailInfo : undefined" @submit="handleSubmit">
     <el-form-item label="用户名" prop="username">
       <el-input v-model="formData.username" />
     </el-form-item>
@@ -100,7 +95,10 @@ const handleCreateSubmit = (cb) => {
 };
 
 const handleUpdateSubmit = (cb) => {
-  updateManagerApi(props.id!, formData.value)
+  updateManagerApi({
+    ...formData.value,
+    id: props.id,
+  })
     .then(() => {
       ElMessage.success("提交成功");
       emit("updated", props.id);
