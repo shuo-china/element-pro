@@ -57,8 +57,9 @@ const handleSubmit = (cb) => {
 
 const handleCreateSubmit = (cb) => {
   createDictItemApi({
-    type_id: props.typeId,
     ...formData.value,
+    type_id: props.typeId,
+    status: formData.value.status ? 1 : 0,
   })
     .then(() => {
       ElMessage.success("提交成功");
@@ -73,8 +74,8 @@ const handleCreateSubmit = (cb) => {
 
 const handleUpdateSubmit = (cb) => {
   updateDictItemApi({
-    id: props.id,
     ...formData.value,
+    id: props.id,
     status: formData.value.status ? 1 : 0,
   })
     .then(() => {

@@ -15,7 +15,7 @@ function useDict<T extends string, P extends unknown[] = any>(
     {
       defaultParams: [
         {
-          dict_types: keys,
+          type_keys: keys,
         },
       ] as Parameters<typeof getDictItemOptionsApi>,
     },
