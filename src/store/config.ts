@@ -4,8 +4,8 @@ interface Config {
   base: {
     title: string;
     description: string;
+    logo: FileItem;
     copyright: string;
-    logo: string;
     layout: "top" | "side" | "mix";
     loginType: "password" | "wechat";
   };

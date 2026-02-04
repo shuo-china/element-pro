@@ -47,7 +47,7 @@
               <pro-upload v-else-if="row.type === 'images'" v-model="row.value_raw" type="image"
                 v-model:file-list="row.value" :upload-props="{ limit: 9 }"
                 @change="() => handleUpdateConfigItemValue(row, row.value_raw)" />
-              <div v-if="row.tips" class="mt-1 text-xs text-black/40">
+              <div v-if="row.desc" class="mt-1 text-xs text-black/40">
                 {{ row.desc }}
               </div>
             </template>

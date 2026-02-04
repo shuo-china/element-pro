@@ -13,6 +13,10 @@
     <el-form-item label="昵称" prop="nickname">
       <el-input v-model="formData.nickname" />
     </el-form-item>
+    <el-form-item label="头像" prop="avatar">
+      <pro-upload type="image" :upload-props="{ limit: 1 }" v-model="formData.avatar_key"
+        v-model:file-list="formData.avatar" />
+    </el-form-item>
     <el-form-item label="角色" prop="role_ids">
       <el-checkbox-group v-model="formData.role_ids" :options="roleOptions" />
     </el-form-item>
@@ -47,6 +51,8 @@ const formData = ref({
   mobile: "",
   nickname: "",
   role_ids: [],
+  avatar_key: null,
+  avatar: null
 });
 
 const rules: FormRules = {
@@ -73,6 +79,8 @@ const getDetailInfo = async (params) =>
     mobile: res.mobile,
     nickname: res.nickname,
     role_ids: res.roles.map((item) => item.id),
+    avatar_key: res.avatar_key,
+    avatar: res.avatar,
   }));
 
 const handleSubmit = (cb) => {

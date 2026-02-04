@@ -46,8 +46,8 @@ const { config } = storeToRefs(configStore);
 const props = withDefaults(
   defineProps<{
     type?: "image" | "file";
-    modelValue?: string;
-    fileList?: FileItem | FileItem[];
+    modelValue?: Nullable<string>;
+    fileList?: Nullable<FileItem | FileItem[]>;
     showTip?: boolean;
     uploadProps?: Partial<UploadProps>;
     config?: {
@@ -137,7 +137,7 @@ const handleBeforeUpload = (rawFile: UploadRawFile) => {
   return true;
 };
 
-const transformFileList = (files: FileItem[] | FileItem) => {
+const transformFileList = (files: Nullable<FileItem[] | FileItem>) => {
   const list = Array.isArray(files) ? files : files ? [files] : [];
   list.forEach((file) => {
     if (!file.url && file.path) {

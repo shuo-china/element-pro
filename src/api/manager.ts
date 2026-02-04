@@ -6,6 +6,7 @@ interface ManagerInfoResponseData {
   nickname: string;
   roles: string[];
   is_top: number;
+  avatar: FileItem;
 }
 
 export function getAccessTokenByPasswordApi(

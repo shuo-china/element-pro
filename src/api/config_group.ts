@@ -31,10 +31,14 @@ export function getConfigGroupListApi(options?: AxiosRequestConfig) {
   });
 }
 
-export function getConfigGroupPaginationApi(options?: AxiosRequestConfig) {
+export function getConfigGroupPaginationApi(
+  params?: Record<string, any>,
+  options?: AxiosRequestConfig,
+) {
   return request({
     url: "/config_group/pagination",
     method: "get",
+    params,
     ...options,
   });
 }

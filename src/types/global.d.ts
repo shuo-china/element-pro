@@ -12,6 +12,13 @@ declare global {
     value: string | number;
   };
 
+  type FileItem = {
+    id: number;
+    key: string;
+    name: string;
+    path: string;
+  };
+
   type ApiErrorData = {
     code: string;
     message: string;

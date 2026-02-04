@@ -2,39 +2,21 @@
   <el-container class="h-full">
     <el-header class="flex h-15 items-center border-b border-black/15">
       <div class="h-8 w-47 shrink-0 grow-0">
-        <img
-          class="h-full cursor-pointer"
-          :src="config?.base.logo"
-          alt="logo"
-          @click="router.push('/')"
-        />
+        <img class="h-full cursor-pointer" :src="config?.base.logo?.path" alt="logo" @click="router.push('/')" />
       </div>
       <div class="h-full flex-1 overflow-hidden">
-        <el-menu
-          router
-          :default-active="topActiveKey"
-          mode="horizontal"
-          class="h-full"
-        >
+        <el-menu router :default-active="topActiveKey" mode="horizontal" class="h-full">
           <MenuItem v-for="item in topMenus" :menu="item" />
         </el-menu>
       </div>
       <el-dropdown class="h-full shrink-0 grow-0">
-        <div
-          class="flex cursor-pointer items-center px-3 outline-none hover:bg-black/3"
-        >
-          <el-avatar
-            shape="circle"
-            :size="32"
-            src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
-          ></el-avatar>
+        <div class="flex cursor-pointer items-center px-3 outline-none hover:bg-black/3">
+          <el-avatar shape="circle" :size="32" :src="managerStore.managerInfo?.avatar || defaultAvatar"></el-avatar>
           <span class="pl-2 text-black/50">{{ managerInfo?.nickname }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item icon="SwitchButton" @click="handleLogout"
-              >退出登录</el-dropdown-item
-            >
+            <el-dropdown-item icon="SwitchButton" @click="handleLogout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -59,9 +41,11 @@ import { useMenuStore } from "@/store/menu";
 import MenuItem from "./MenuItem.vue";
 import { useManagerStore } from "@/store/manager";
 import { useConfigStore } from "@/store/config";
+import defaultAvatar from "@/assets/default_avatar.png";
 
 const configStore = useConfigStore();
 const { config } = storeToRefs(configStore);
+
 
 const menuStore = useMenuStore();
 const managerStore = useManagerStore();

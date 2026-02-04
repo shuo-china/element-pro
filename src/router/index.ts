@@ -67,19 +67,19 @@ export const routes: RouteRecordRaw[] = [
     },
     children: [
       {
-        path: "role",
-        component: () => import("@/pages/setting/role/index.vue"),
-        meta: {
-          title: "角色管理",
-          icon: "CollectionTag",
-        },
-      },
-      {
         path: "manager",
         component: () => import("@/pages/setting/manager/index.vue"),
         meta: {
           title: "管理员",
           icon: "User",
+        },
+      },
+      {
+        path: "role",
+        component: () => import("@/pages/setting/role/index.vue"),
+        meta: {
+          title: "角色管理",
+          icon: "CollectionTag",
         },
       },
       {
