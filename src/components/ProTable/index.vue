@@ -5,12 +5,8 @@
     </template>
   </el-table>
   <div class="mt-4 flex justify-end">
-    <el-pagination
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      :total="total"
-      v-bind="paginationProps"
-    />
+    <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total"
+      v-bind="paginationProps" />
   </div>
 </template>
 
@@ -45,6 +41,7 @@ const tableProps = computed(() =>
 const defaultPaginationProps: Partial<PaginationProps> = {
   layout: "prev, pager, next, sizes, total",
   background: true,
+  pageSizes: [10, 15, 20, 30, 50, 100],
 };
 
 const paginationProps = computed(() =>

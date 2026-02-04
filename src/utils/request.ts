@@ -20,6 +20,12 @@ export class ApiError extends Error {
   }
 }
 
+export class ApiTokenInvalidError extends ApiError {
+  constructor(data: ApiErrorData) {
+    super("ApiTokenInvalidError", 401, data);
+  }
+}
+
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
 });
@@ -42,6 +48,7 @@ axiosInstance.interceptors.response.use(
       if (response.status === 401 && response.data.code === "TOKEN_INVALID") {
         useManagerStore().clear();
         location.reload();
+        return Promise.reject(new ApiTokenInvalidError(response.data));
       } else {
         const errorMsg = response.data.message || message || "Unknown Error";
         if (response.status >= 500) {

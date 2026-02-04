@@ -1,13 +1,14 @@
-import { getConfigInitApi } from "@/api/config_group";
+import { getConfigInitApi, getConfigInitNoAuthApi } from "@/api/config_group";
+import _ from "lodash";
 
 interface Config {
   base: {
     title: string;
     description: string;
-    logo: FileItem;
+    logo: Nullable<FileItem>;
     copyright: string;
     layout: "top" | "side" | "mix";
-    loginType: "password" | "wechat";
+    loginTypes: ("password" | "wechat")[];
   };
   upload: Record<
     "image" | "file",
@@ -28,51 +29,57 @@ interface Config {
   };
 }
 
+const transformReceivedConfig = (res: any) => {
+  return {
+    base: {
+      title: res.base?.web_site_title || "",
+      description: res.base?.web_site_description || "",
+      copyright: res.base?.web_site_copyright || "",
+      logo: res.base?.web_site_logo || null,
+      layout: res.base?.web_site_layout || "side",
+      loginTypes: res.base?.web_site_login_type || [],
+    },
+    upload: {
+      image: {
+        limitExt: res.upload?.image_ext || [],
+        limitSize: res.upload?.image_size || 0,
+      },
+      file: {
+        limitExt: res.upload?.file_ext || [],
+        limitSize: res.upload?.file_size || 0,
+      },
+    },
+    pagination: {
+      defaultPageSize: res.pagination?.default_page_size || 10,
+      requestPageKey: res.pagination?.request_page_key || "page",
+      requestPageSizeKey: res.pagination?.request_page_size_key || "list_rows",
+      responseTotalKey: res.pagination?.response_total_key || "total",
+      responseDataKey: res.pagination?.response_data_key || "data",
+    },
+    wechat: {
+      appid: res.wechat?.appid || "",
+    },
+  };
+};
+
 export const useConfigStore = defineStore("config", () => {
   const config = ref<Nullable<Config>>(null);
 
-  const isInitialized = computed(() => {
-    return !!config.value;
-  });
+  const initBeforeLogin = () => {
+    return getConfigInitNoAuthApi().then((res) => {
+      config.value = transformReceivedConfig(res);
+    });
+  };
 
-  const init = () => {
+  const initAfterLogin = () => {
     return getConfigInitApi().then((res) => {
-      config.value = {
-        base: {
-          title: res.base?.web_site_title,
-          description: res.base?.web_site_description,
-          copyright: res.base?.web_site_copyright,
-          logo: res.base?.web_site_logo,
-          layout: res.base?.web_site_layout,
-          loginType: res.base?.web_site_login_type,
-        },
-        pagination: {
-          defaultPageSize: res.pagination?.default_page_size,
-          requestPageKey: res.pagination?.request_page_key,
-          requestPageSizeKey: res.pagination?.request_page_size_key,
-          responseTotalKey: res.pagination?.response_total_key,
-          responseDataKey: res.pagination?.response_data_key,
-        },
-        upload: {
-          image: {
-            limitExt: res.upload?.upload_image_ext,
-            limitSize: res.upload?.upload_image_size,
-          },
-          file: {
-            limitExt: res.upload?.upload_file_ext,
-            limitSize: res.upload?.upload_file_size,
-          },
-        },
-        wechat: {
-          appid: res.wechat_login?.wechat_login_appid,
-        },
-      };
+      config.value = transformReceivedConfig(res);
     });
   };
 
   return {
-    isInitialized,
     config,
-    init,
+    initBeforeLogin,
+    initAfterLogin,
   };
 });

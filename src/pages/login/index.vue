@@ -4,10 +4,10 @@
       <div class="flex flex-col px-8 py-6">
         <div class="mt-6 text-center">
           <div class="flex items-center justify-center">
-            <img class="h-12" :src="config?.base.logo" alt="logo" />
+            <img class="h-12" :src="config?.base.logo?.path" alt="logo" />
             <!-- <span class="ml-4 text-3xl font-bold">{{
               config?.base.title
-            }}</span> -->
+              }}</span> -->
           </div>
           <div class="my-3 mt-5 text-sm text-black/50">
             {{ config?.base.description }}
@@ -15,10 +15,10 @@
         </div>
         <div class="mx-auto w-80 max-w-[75vw]">
           <el-tabs class="login-type-tabs">
-            <el-tab-pane v-if="config?.base.loginType?.includes('password')" label="账号密码登录">
+            <el-tab-pane v-if="config?.base.loginTypes?.includes('password')" label="账号密码登录">
               <password-login />
             </el-tab-pane>
-            <el-tab-pane v-if="config?.base.loginType?.includes('wechat')" label="微信扫码登录">
+            <el-tab-pane v-if="config?.base.loginTypes?.includes('wechat')" label="微信扫码登录">
               <wechat-login />
             </el-tab-pane>
           </el-tabs>

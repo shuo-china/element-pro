@@ -165,7 +165,7 @@ const configGroupTableRef = ref<ProTableInstance>();
 const handleConfigGroupFinished = () => {
   configGroupTableRef.value?.refresh();
   runConfigGroupList();
-  configStore.init();
+  configStore.initAfterLogin();
 };
 
 const configItemFormVisible = ref(false);
@@ -225,7 +225,7 @@ const handleUpdateConfigItemValue = (item: ConfigItem, value: any = item.value) 
     type: item.type,
     value,
   }).then(() => {
-    configStore.init();
+    configStore.initAfterLogin();
   });
 };
 </script>

@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-loading="true"
-    element-loading-text="页面回调中"
-    class="h-full w-full"
-  ></div>
+  <div v-loading="true" element-loading-text="页面回调中" class="h-full w-full"></div>
 </template>
 
 <script setup lang="ts">
@@ -40,11 +36,16 @@ async function handleLogic() {
 
     case "wechatLogin":
       const managerStore = useManagerStore();
-      await managerStore.getAccessToken("wechat", {
-        code: route.query.code,
-      });
-      await router.push("/");
-      ElMessage.success("登录成功");
+      try {
+        await managerStore.getAccessToken("wechat", {
+          code: route.query.code,
+        });
+        await router.push("/");
+        ElMessage.success("登录成功");
+      } catch (error) {
+        router.push({ name: "Login" });
+      }
+
       break;
   }
 }

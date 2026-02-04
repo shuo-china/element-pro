@@ -15,6 +15,14 @@ export function getConfigInitApi(options?: AxiosRequestConfig) {
   });
 }
 
+export function getConfigInitNoAuthApi(options?: AxiosRequestConfig) {
+  return request({
+    url: "/config_group/initNoAuth",
+    method: "get",
+    ...options,
+  });
+}
+
 export function getConfigGroupOptionsApi(options?: AxiosRequestConfig) {
   return request<OptionItem[]>({
     url: "/config_group/options",
