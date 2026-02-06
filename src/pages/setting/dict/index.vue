@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-full gap-x-6 p-6">
-    <el-card class="flex-1 overflow-auto" body-class="flex flex-wrap gap-6" shadow="never">
+    <el-card class="flex-1 overflow-auto" body-class="flex flex-wrap gap-6 content-start" shadow="never">
       <div class="min-h-25 max-w-full">
         <el-button size="large" icon="Plus" plain class="h-full max-w-full w-85 border-dashed"
           @click="handleCreateDict">添加字典</el-button>

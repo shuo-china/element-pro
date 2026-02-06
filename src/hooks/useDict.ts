@@ -1,5 +1,5 @@
 import useRequest from "@/hooks/useRequest";
-import { getDictItemOptionsApi } from "@/api/dict_item";
+import { getDictOptionsApi } from "@/api/dict_type";
 import type { Options } from "./useRequest/type";
 import { merge } from "lodash";
 
@@ -15,15 +15,15 @@ function useDict<T extends string, P extends unknown[] = any>(
     {
       defaultParams: [
         {
-          type_keys: keys,
+          keys,
         },
-      ] as Parameters<typeof getDictItemOptionsApi>,
+      ] as Parameters<typeof getDictOptionsApi>,
     },
     options,
   );
 
   const { data, loading, ...rest } = useRequest(
-    getDictItemOptionsApi,
+    getDictOptionsApi,
     finallyOptions,
   );
 

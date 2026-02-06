@@ -10,18 +10,6 @@ interface DictItem {
   status: number;
 }
 
-export function getDictItemOptionsApi(
-  params?: Record<string, any>,
-  options?: AxiosRequestConfig,
-) {
-  return request({
-    url: "/dict_item/options",
-    method: "get",
-    params,
-    ...options,
-  });
-}
-
 export function getDictItemListApi(
   params?: Record<string, any>,
   options?: AxiosRequestConfig,

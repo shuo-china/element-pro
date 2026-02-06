@@ -8,6 +8,18 @@ interface DictType {
   status: number;
 }
 
+export function getDictOptionsApi(
+  params?: Record<string, any>,
+  options?: AxiosRequestConfig,
+) {
+  return request({
+    url: "/dict_itemtype/options",
+    method: "get",
+    params,
+    ...options,
+  });
+}
+
 export function getDictTypeListApi(
   params?: Record<string, any>,
   options?: AxiosRequestConfig,

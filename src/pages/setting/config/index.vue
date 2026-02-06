@@ -79,7 +79,7 @@
           @click="handleCreateConfigItem">新增配置</el-button>
       </div>
     </el-card>
-    <el-card class="basis-100 overflow-auto" body-class="flex flex-wrap" shadow="never">
+    <el-card class="basis-100 overflow-auto" body-class="flex flex-wrap content-start" shadow="never">
       <div class="mb-4">
         <el-button icon="Plus" type="primary" @click="handleCreateConfigGroup">新增配置组</el-button>
       </div>
