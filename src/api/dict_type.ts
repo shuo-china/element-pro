@@ -13,7 +13,7 @@ export function getDictOptionsApi(
   options?: AxiosRequestConfig,
 ) {
   return request({
-    url: "/dict_itemtype/options",
+    url: "/dict_type/options",
     method: "get",
     params,
     ...options,
