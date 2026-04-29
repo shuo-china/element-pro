@@ -83,7 +83,7 @@ export function updateManagerApi(
 ) {
   return request({
     url: `/manager/update`,
-    method: "patch",
+    method: "post",
     data,
     ...options,
   });
@@ -92,7 +92,7 @@ export function updateManagerApi(
 export function deleteManagerApi(id: number, options?: AxiosRequestConfig) {
   return request({
     url: `/manager/delete`,
-    method: "delete",
+    method: "post",
     params: { id },
     ...options,
   });
