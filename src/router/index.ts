@@ -83,6 +83,14 @@ export const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "menu",
+        component: () => import("@/pages/setting/menu/index.vue"),
+        meta: {
+          title: "菜单管理",
+          icon: "Menu",
+        },
+      },
+      {
         path: "config",
         component: () => import("@/pages/setting/config/index.vue"),
         meta: {
