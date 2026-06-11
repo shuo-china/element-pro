@@ -23,7 +23,7 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/exception",
+    path: "/error",
     component: AdminLayout,
     meta: {
       hidden: true,
@@ -32,13 +32,13 @@ export const routes: RouteRecordRaw[] = [
       {
         path: "403",
         name: "Forbidden",
-        component: () => import("@/pages/exception/403.vue"),
+        component: () => import("@/pages/error/403.vue"),
       },
       {
         path: "404",
         name: "Not_Found",
         alias: "/:pathMatch(.*)*",
-        component: () => import("@/pages/exception/404.vue"),
+        component: () => import("@/pages/error/404.vue"),
       },
     ],
   },
@@ -104,6 +104,21 @@ export const routes: RouteRecordRaw[] = [
         meta: {
           title: "字典管理",
           icon: "Tickets",
+        },
+      },
+    ],
+  },
+  {
+    path: "/exception",
+    component: AdminLayout,
+    redirect: "/exception",
+    children: [
+      {
+        path: "",
+        component: () => import("@/pages/exception/index.vue"),
+        meta: {
+          title: "错误日志",
+          icon: "CircleClose",
         },
       },
     ],

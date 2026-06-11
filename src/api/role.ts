@@ -62,3 +62,24 @@ export function deleteRoleApi(id: number, options?: AxiosRequestConfig) {
     ...options,
   });
 }
+
+export function getRoleMenusApi(id: number, options?: AxiosRequestConfig) {
+  return request<number[]>({
+    url: "/role/menus",
+    method: "get",
+    params: { id },
+    ...options,
+  });
+}
+
+export function updateRoleMenusApi(
+  data: { id: number; menu_ids: number[] },
+  options?: AxiosRequestConfig,
+) {
+  return request({
+    url: "/role/update_menus",
+    method: "post",
+    data,
+    ...options,
+  });
+}
