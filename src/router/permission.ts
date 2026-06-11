@@ -1,5 +1,5 @@
 import router from "@/router";
-import { access } from "./access";
+import { setupDynamicRoutes } from "@/router/dynamic";
 import { useConfigStore } from "@/store/config";
 import { useManagerStore } from "@/store/manager";
 import { useMenuStore } from "@/store/menu";
@@ -24,20 +24,22 @@ router.beforeEach(async (to, _from, next) => {
 
   if (!managerStore.hasManagerInfo) {
     try {
+      const menuStore = useMenuStore();
       await managerStore.getManagerInfo();
+      await menuStore.updateMenus();
+      setupDynamicRoutes(menuStore.menus);
       await useConfigStore().initAfterLogin();
-      useMenuStore().updateMenus();
+      return next({
+        path: to.path,
+        query: to.query,
+        hash: to.hash,
+        replace: true,
+      });
     } catch (error) {
       if (!(error instanceof ApiTokenInvalidError)) {
         managerStore.clear();
         return next({ name: "Login" });
       }
-    }
-  }
-
-  for (const route of to.matched) {
-    if (!access(managerStore.managerInfo!, route.meta)) {
-      return next({ name: "Forbidden" });
     }
   }
 

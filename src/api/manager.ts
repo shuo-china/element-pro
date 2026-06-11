@@ -1,11 +1,19 @@
 import request from "@/utils/request";
 import type { AxiosRequestConfig } from "axios";
 
+export interface RoleItem {
+  id: number;
+  name: string;
+  key?: string;
+  status?: number;
+}
+
 interface ManagerInfoResponseData {
   id: number;
   nickname: string;
-  roles: string[];
-  avatar: FileItem;
+  is_top: number;
+  roles: RoleItem[];
+  avatar?: FileItem;
 }
 
 export function getAccessTokenByPasswordApi(

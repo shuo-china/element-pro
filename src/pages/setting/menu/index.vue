@@ -55,8 +55,8 @@
         >
           <template #default="{ data }">
             <div class="menu-tree-node">
-              <el-icon v-if="data.icon" class="menu-tree-icon">
-                <component :is="data.icon" />
+              <el-icon v-if="data.icon" class="shrink-0 text-base">
+                <component :is="getIconComponent(data.icon)" />
               </el-icon>
               <span class="truncate">{{ data.title }}</span>
             </div>
@@ -113,25 +113,62 @@
           <el-form-item label="图标" prop="icon">
             <el-select
               v-model="formData.icon"
+              class="icon-select"
               clearable
               filterable
-              :value-on-clear="''"
+              popper-class="menu-icon-select-popper"
               placeholder="请选择图标"
+              :value-on-clear="''"
             >
-              <el-option
-                v-for="icon in iconOptions"
-                :key="icon"
-                :label="icon"
-                :value="icon"
-              >
-                <div class="flex items-center gap-x-2">
-                  <el-icon>
-                    <component :is="icon" />
+              <template #label="{ value }">
+                <span class="icon-select-value">
+                  <el-icon v-if="value">
+                    <component :is="getIconComponent(value)" />
                   </el-icon>
-                  <span>{{ icon }}</span>
-                </div>
+                </span>
+              </template>
+              <el-option
+                v-for="iconName in iconNames"
+                :key="iconName"
+                :label="iconName"
+                :value="iconName"
+              >
+                <span class="icon-option">
+                  <el-icon>
+                    <component :is="getIconComponent(iconName)" />
+                  </el-icon>
+                </span>
               </el-option>
             </el-select>
+          </el-form-item>
+
+          <el-form-item label="接口标识" prop="api_keys">
+            <div class="api-key-list">
+              <div
+                v-for="(_apiKey, index) in formData.api_keys"
+                :key="index"
+                class="api-key-row"
+              >
+                <el-input
+                  v-model="formData.api_keys[index]"
+                  placeholder="请输入 app/controller/action"
+                />
+                <el-button
+                  circle
+                  icon="SemiSelect"
+                  plain
+                  @click="handleRemoveApiKey(index)"
+                />
+              </div>
+              <el-button
+                class="mt-2 h-9 w-full border-dashed"
+                icon="Plus"
+                plain
+                @click="handleAddApiKey"
+              >
+                新增接口标识
+              </el-button>
+            </div>
           </el-form-item>
 
           <el-form-item>
@@ -165,20 +202,24 @@ import {
   updateMenuApi,
   type Menu,
 } from "@/api/menu";
+import { setupDynamicRoutes } from "@/router/dynamic";
+import { useMenuStore } from "@/store/menu";
 import {
   ElMessage,
   ElMessageBox,
   type FormInstance,
   type FormRules,
 } from "element-plus";
-import * as ElementPlusIcons from "@element-plus/icons-vue";
+import * as ElementPlusIconsVue from "@element-plus/icons-vue";
+import type { Component } from "vue";
 
 type MenuForm = {
   id?: number;
   parent_id: number;
   title: string;
-  path: string;
   icon: string;
+  path: string;
+  api_keys: string[];
 };
 
 type MenuOption = {
@@ -191,8 +232,9 @@ type MenuOption = {
 const emptyForm = (): MenuForm => ({
   parent_id: 0,
   title: "",
-  path: "",
   icon: "",
+  path: "",
+  api_keys: [],
 });
 
 const formRef = ref<FormInstance>();
@@ -204,11 +246,61 @@ const expanded = ref(true);
 const mode = ref<"create" | "update">("create");
 const activeMenu = ref<Menu>();
 const formData = ref<MenuForm>(emptyForm());
+const iconMap = ElementPlusIconsVue as unknown as Record<string, Component>;
+const iconNames = Object.keys(iconMap).sort((a, b) => a.localeCompare(b));
+const menuStore = useMenuStore();
+
+const getIconComponent = (iconName: string) => iconMap[iconName];
+
+const apiKeyPattern =
+  /^[A-Za-z][A-Za-z0-9_]*\/[A-Za-z][A-Za-z0-9_]*\/[A-Za-z][A-Za-z0-9_]*$/;
+
+const normalizeApiKeys = (apiKeys: string[] = []) =>
+  Array.from(
+    new Set(apiKeys.map((apiKey) => apiKey.trim()).filter((apiKey) => apiKey)),
+  );
+
+const handleAddApiKey = () => {
+  formData.value.api_keys.push("");
+};
+
+const handleRemoveApiKey = (index: number) => {
+  formData.value.api_keys.splice(index, 1);
+};
 
 const rules: FormRules = {
   parent_id: [{ required: true, message: "请选择上级菜单", trigger: "change" }],
   title: [{ required: true, message: "请输入菜单标题", trigger: "blur" }],
   path: [{ required: true, message: "请输入菜单路径", trigger: "blur" }],
+  api_keys: [
+    {
+      validator: (_rule, value: string[] = [], callback) => {
+        const apiKeys = value
+          .map((apiKey) => apiKey.trim())
+          .filter((apiKey) => apiKey);
+        const invalidApiKey = apiKeys.find(
+          (apiKey) => !apiKeyPattern.test(apiKey),
+        );
+
+        if (invalidApiKey) {
+          callback(
+            new Error(
+              `接口标识格式错误：${invalidApiKey}，请使用 app/controller/action`,
+            ),
+          );
+          return;
+        }
+
+        if (new Set(apiKeys).size !== apiKeys.length) {
+          callback(new Error("接口标识不能重复"));
+          return;
+        }
+
+        callback();
+      },
+      trigger: "blur",
+    },
+  ],
 };
 
 const panelTitle = computed(() => {
@@ -218,8 +310,6 @@ const panelTitle = computed(() => {
 
   return `编辑菜单：${formData.value.title || "-"}`;
 });
-
-const iconOptions = Object.keys(ElementPlusIcons);
 
 const parentOptions = computed<MenuOption[]>(() => [
   {
@@ -244,14 +334,20 @@ const refreshMenuTree = async () => {
   }
 };
 
+const refreshCurrentMenus = async () => {
+  await menuStore.updateMenus();
+  setupDynamicRoutes(menuStore.menus);
+};
+
 const normalizeMenuTree = (items: any[] = []): Menu[] =>
   (Array.isArray(items) ? items : []).map((item) => {
     const menu: Menu = {
       id: Number(item.id),
       parent_id: Number(item.parent_id || 0),
       title: item.title || "",
-      path: item.path || "",
       icon: item.icon || "",
+      path: item.path || "",
+      api_keys: Array.isArray(item.api_keys) ? item.api_keys : [],
     };
     const children = normalizeMenuTree(item.children);
 
@@ -305,8 +401,9 @@ const handleSelectMenu = (item: Menu) => {
     id: item.id,
     parent_id: item.parent_id,
     title: item.title,
-    path: item.path,
     icon: item.icon || "",
+    path: item.path,
+    api_keys: [...(item.api_keys || [])],
   };
   formRef.value?.clearValidate();
 };
@@ -317,8 +414,9 @@ const handleNodeDrop = async () => {
 
   try {
     await updateMenuSortApi({ menus });
-    ElMessage.success("排序已保存");
     await refreshMenuTree();
+    await refreshCurrentMenus();
+    ElMessage.success("排序已保存");
 
     if (currentId) {
       const current = findMenu(menuTree.value, currentId);
@@ -395,20 +493,27 @@ const handleSubmit = async () => {
 
   submitting.value = true;
   try {
+    const submitData = {
+      ...formData.value,
+      icon: formData.value.icon || "",
+      api_keys: normalizeApiKeys(formData.value.api_keys),
+    };
+
     if (mode.value === "create") {
-      await createMenuApi(formData.value);
+      await createMenuApi(submitData);
       ElMessage.success("新增成功");
       handleCreateRoot();
     } else {
-      await updateMenuApi(formData.value);
+      await updateMenuApi(submitData);
       ElMessage.success("保存成功");
       activeMenu.value = {
         ...(activeMenu.value as Menu),
-        ...formData.value,
+        ...submitData,
       };
     }
 
     await refreshMenuTree();
+    await refreshCurrentMenus();
   } finally {
     submitting.value = false;
   }
@@ -427,6 +532,7 @@ const handleDelete = () => {
       ElMessage.success("删除成功");
       handleCreateRoot();
       await refreshMenuTree();
+      await refreshCurrentMenus();
     })
     .catch(() => undefined);
 };
@@ -485,9 +591,73 @@ onMounted(() => {
   font-size: 15px;
 }
 
-.menu-tree-icon {
-  flex: 0 0 auto;
-  color: #606266;
+.icon-select {
+  width: 100%;
+}
+
+.api-key-list {
+  width: 100%;
+}
+
+.api-key-row {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.api-key-row + .api-key-row {
+  margin-top: 8px;
+}
+
+.icon-select :deep(.el-select__selected-item) {
+  display: flex;
+  align-items: center;
+}
+
+.icon-select-value {
+  display: inline-flex;
+  height: var(--el-component-size);
+  align-items: center;
   font-size: 18px;
+  line-height: 1;
+}
+
+.icon-select-value .el-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-option {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+:global(.menu-icon-select-popper .el-select-dropdown__list) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+  gap: 6px;
+  padding: 8px;
+}
+
+:global(.menu-icon-select-popper .el-select-dropdown__item) {
+  display: flex;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 0;
+}
+
+:global(.menu-icon-select-popper .el-select-dropdown__item.is-selected) {
+  background-color: var(--el-color-primary-light-9);
+}
+
+:global(.menu-icon-select-popper .el-select-dropdown__item span) {
+  line-height: 1;
 }
 </style>

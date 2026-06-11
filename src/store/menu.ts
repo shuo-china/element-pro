@@ -1,8 +1,6 @@
+import { getCurrentMenuTreeApi } from "@/api/menu";
+import type { Menu as ApiMenu } from "@/api/menu";
 import { resolve } from "path-browserify";
-import type { RouteMeta, RouteRecordRaw } from "vue-router";
-import { routes } from "@/router";
-import { useManagerStore } from "./manager";
-import { access } from "@/router/access";
 import { useConfigStore } from "./config";
 
 export type Menu = {
@@ -12,56 +10,16 @@ export type Menu = {
   children: Menu[];
 };
 
-function gererateMenusByRoutes(routes: RouteRecordRaw[]) {
-  const menus: Menu[] = [];
-
-  const { managerInfo } = useManagerStore();
-
-  if (!managerInfo) {
-    return [];
-  }
-
-  routes.forEach((route) => {
-    const menu = generateMenuByRoute(route, (meta) =>
-      access(managerInfo, meta),
-    );
-    if (menu) {
-      menus.push(menu);
-    }
-  });
-
-  return menus;
-}
-
-function generateMenuByRoute(
-  route: RouteRecordRaw,
-  permission: (meta?: RouteMeta) => boolean,
-  parent: Nullable<Menu> = null,
-) {
-  if (route.meta?.hidden) return null;
-  if (!permission(route.meta)) return null;
-
-  let menu: Menu = {
-    title: route.meta?.title || "",
-    path: resolve(parent?.path || "", route.path),
-    icon: route.meta?.icon,
-    children: [],
-  };
-
-  if (route.children && route.children.length) {
-    route.children.forEach((child) => {
-      const childMenu = generateMenuByRoute(child, permission, menu);
-      if (childMenu) {
-        menu.children.push(childMenu);
-      }
-    });
-  }
-
-  if (menu.children.length === 1) {
-    menu = menu.children[0]!;
-  }
-
-  return menu;
+function normalizeMenuTree(menuTree: ApiMenu[], parentPath = ""): Menu[] {
+  return menuTree.map((menu) => ({
+    title: menu.title,
+    path: resolve(parentPath, menu.path),
+    icon: menu.icon,
+    children: normalizeMenuTree(
+      menu.children || [],
+      resolve(parentPath, menu.path),
+    ),
+  }));
 }
 
 export const useMenuStore = defineStore("menu", () => {
@@ -78,6 +36,7 @@ export const useMenuStore = defineStore("menu", () => {
 
   const topMenus = ref<Menu[]>([]);
   const sideMenus = ref<Menu[]>([]);
+  const menus = ref<Menu[]>([]);
 
   const topActiveKey = computed(() => {
     switch (layout.value) {
@@ -106,21 +65,23 @@ export const useMenuStore = defineStore("menu", () => {
         return currentRoute.path;
     }
   });
+  const sideOpenedKeys = computed(() =>
+    activePaths.value.filter((path) => path !== currentRoute.path),
+  );
 
-  function updateMenus() {
+  function updateMenusByLayout() {
     switch (layout.value) {
       case "top":
-        topMenus.value = gererateMenusByRoutes(routes);
+        topMenus.value = menus.value;
         sideMenus.value = [];
         break;
       case "side":
         topMenus.value = [];
-        sideMenus.value = gererateMenusByRoutes(routes);
+        sideMenus.value = menus.value;
         break;
       case "mix":
-        const menus = gererateMenusByRoutes(routes);
-        topMenus.value = menus.map((m) => ({ ...m, children: [] }));
-        const selectedTopMenu = menus.find((m) =>
+        topMenus.value = menus.value.map((m) => ({ ...m, children: [] }));
+        const selectedTopMenu = menus.value.find((m) =>
           activePaths.value.includes(m.path),
         );
         sideMenus.value = selectedTopMenu?.children || [];
@@ -128,22 +89,29 @@ export const useMenuStore = defineStore("menu", () => {
     }
   }
 
+  async function updateMenus() {
+    menus.value = normalizeMenuTree(await getCurrentMenuTreeApi());
+    updateMenusByLayout();
+  }
+
   watch(layout, () => {
-    updateMenus();
+    updateMenusByLayout();
   });
 
   watch(topActiveKey, () => {
     if (layout.value === "mix") {
-      updateMenus();
+      updateMenusByLayout();
     }
   });
 
   return {
     layout,
+    menus,
     sideMenus,
     topMenus,
     topActiveKey,
     sideActiveKey,
+    sideOpenedKeys,
     updateMenus,
   };
 });

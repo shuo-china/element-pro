@@ -7,12 +7,21 @@ export interface Menu {
   title: string;
   path: string;
   icon?: string;
+  api_keys?: string[];
   children?: Menu[];
 }
 
 export function getMenuTreeApi(options?: AxiosRequestConfig) {
   return request<Menu[]>({
     url: "/menu/tree",
+    method: "get",
+    ...options,
+  });
+}
+
+export function getCurrentMenuTreeApi(options?: AxiosRequestConfig) {
+  return request<Menu[]>({
+    url: "/menu/currentMenus",
     method: "get",
     ...options,
   });

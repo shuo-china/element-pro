@@ -9,6 +9,7 @@ export interface ManagerInfo {
   id: number;
   nickname: string;
   roles: string[];
+  isTop: boolean;
   avatar?: string;
 }
 
@@ -28,11 +29,13 @@ export const useManagerStore = defineStore("manager", () => {
   };
 
   const getManagerInfo = async () => {
-    const { id, nickname, roles, avatar } = await getCurrentManagerInfoApi();
+    const { id, nickname, roles, is_top, avatar } =
+      await getCurrentManagerInfoApi();
     managerInfo.value = {
       id,
       nickname,
-      roles,
+      roles: roles.map((role) => role.key || `${role.id}`),
+      isTop: !!is_top,
       avatar: avatar?.path,
     };
   };
