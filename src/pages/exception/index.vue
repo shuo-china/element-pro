@@ -70,7 +70,12 @@
     </pro-table>
 
     <el-drawer v-model="detailVisible" title="错误日志详情" size="50%">
-      <el-descriptions v-if="detail" :column="1" border>
+      <el-descriptions
+        v-if="detail"
+        :column="1"
+        :border="true"
+        :label-width="110"
+      >
         <el-descriptions-item label="ID">{{ detail.id }}</el-descriptions-item>
         <el-descriptions-item label="错误码">
           {{ detail.error_code }}
