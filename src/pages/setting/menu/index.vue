@@ -416,7 +416,6 @@ const handleNodeDrop = async () => {
     await updateMenuSortApi({ menus });
     await refreshMenuTree();
     await refreshCurrentMenus();
-    ElMessage.success("排序已保存");
 
     if (currentId) {
       const current = findMenu(menuTree.value, currentId);
