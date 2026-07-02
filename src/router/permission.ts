@@ -1,6 +1,7 @@
 import router from "@/router";
 import { setupDynamicRoutes } from "@/router/dynamic";
 import { useConfigStore } from "@/store/config";
+import { useDictStore } from "@/store/dict";
 import { useManagerStore } from "@/store/manager";
 import { useMenuStore } from "@/store/menu";
 import { ApiTokenInvalidError } from "@/utils/request";
@@ -29,6 +30,7 @@ router.beforeEach(async (to, _from, next) => {
       await menuStore.updateMenus();
       setupDynamicRoutes(menuStore.menus);
       await useConfigStore().initAfterLogin();
+      await useDictStore().initAfterLogin();
       return next({
         path: to.path,
         query: to.query,
