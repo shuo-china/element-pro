@@ -10,6 +10,7 @@ declare global {
   type OptionItem = {
     label: string;
     value: string | number;
+    color?: string;
   };
 
   type FileItem = {

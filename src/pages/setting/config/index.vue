@@ -1,14 +1,12 @@
 <template>
   <div class="flex h-full gap-x-6 p-6">
     <el-card class="flex-1 overflow-auto" shadow="never">
-      <div class="flex items-end justify-center gap-x-10">
-        <el-scrollbar>
-          <el-tabs v-loading="configGroupListLoading" v-model="currentConfigGroupId" class="flex-1">
-            <el-tab-pane v-for="item in configGroupList" :label="item.name" :name="item.id">
-              <template #label>{{ item.name }} {{ item.key }}</template>
-            </el-tab-pane>
-          </el-tabs>
-        </el-scrollbar>
+      <div class="flex min-w-0 items-end justify-center gap-x-10">
+        <el-tabs v-loading="configGroupListLoading" v-model="currentConfigGroupId" class="max-w-full">
+          <el-tab-pane v-for="item in configGroupList" :label="item.name" :name="item.id">
+            <template #label>{{ item.name }} {{ item.key }}</template>
+          </el-tab-pane>
+        </el-tabs>
       </div>
       <div v-if="!configGroupListLoading" class="mx-auto max-w-[800px]">
         <el-table v-loading="configItemListLoading" :data="configItemList" :show-header="false" size="large">

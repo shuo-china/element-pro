@@ -59,8 +59,15 @@
           closable
           effect="plain"
           size="large"
-          :type="item.status === 1 ? 'primary' : 'danger'"
-          class="cursor-pointer"
+          type="info"
+          :style="{
+            borderColor: getDictItemColor(item),
+            color: getDictItemColor(item),
+          }"
+          :class="[
+            'dict-item-tag cursor-pointer',
+            item.status === 1 ? 'is-enabled' : 'is-disabled',
+          ]"
           @close="handleDeleteDictItem(item.id)"
           @click="handleUpdateDictItem(item)"
         >
@@ -169,4 +176,19 @@ const handleUpdateDictItem = (item) => {
 const handleDeleteDictItem = (id: number) => {
   deleteDictItemApi(id).then(() => refreshDictItemList());
 };
+
+const getDictItemColor = (item) => item.color || "var(--el-color-info)";
 </script>
+
+<style scoped>
+.dict-item-tag {
+  border-width: 1px;
+}
+
+.dict-item-tag.is-disabled {
+  opacity: 0.5;
+  border-style: dashed;
+  filter: grayscale(0.45);
+  text-decoration: line-through;
+}
+</style>

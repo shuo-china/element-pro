@@ -13,3 +13,7 @@ export function getOptionItemByValue(
 export function getOptionLabelByValue(options: OptionItem[], value: any) {
   return options.find((item) => item.value === value)?.label || "";
 }
+
+export function getOptionColorByValue(options: OptionItem[], value: any) {
+  return options.find((item) => item.value === value)?.color || "";
+}

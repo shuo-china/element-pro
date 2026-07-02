@@ -7,6 +7,7 @@ interface DictItem {
   key: string;
   name: string;
   value: string;
+  color?: string;
   status: number;
 }
 

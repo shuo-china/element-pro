@@ -9,7 +9,7 @@ interface DictType {
 }
 
 export function getDictInitApi(options?: AxiosRequestConfig) {
-  return request({
+  return request<Record<string, OptionItem[]>>({
     url: "/dict_type/options",
     method: "get",
     ...options,

@@ -1,14 +1,31 @@
 <template>
-  <dialog-form v-model:visible="visible" :form-props="{ model: formData, rules }" :params="id"
-    :request="mode === 'update' ? getDetailInfo : undefined" @submit="handleSubmit">
+  <dialog-form
+    v-model:visible="visible"
+    :form-props="{ model: formData, rules }"
+    :params="id"
+    :request="mode === 'update' ? getDetailInfo : undefined"
+    @submit="handleSubmit"
+  >
     <el-form-item label="名称" prop="name">
       <el-input v-model="formData.name"></el-input>
     </el-form-item>
     <el-form-item label="值" prop="value">
       <el-input v-model="formData.value"></el-input>
     </el-form-item>
+    <el-form-item label="颜色" prop="color">
+      <el-color-picker-panel
+        :key="colorPickerPanelKey"
+        v-model="formData.color"
+        :predefine="predefineColors"
+      />
+    </el-form-item>
     <el-form-item label="状态" prop="status">
-      <el-switch v-model="formData.status" inline-prompt active-text="启用" inactive-text="禁用" />
+      <el-switch
+        v-model="formData.status"
+        inline-prompt
+        active-text="启用"
+        inactive-text="禁用"
+      />
     </el-form-item>
   </dialog-form>
 </template>
@@ -34,18 +51,38 @@ const visible = defineModel("visible", { type: Boolean, default: false });
 const formData = ref({
   name: "",
   value: "",
+  color: "",
   status: true,
 });
+
+const predefineColors = ["#409eff", "#e6a23c", "#67c23a", "#f56c6c", "#909399"];
+const colorPickerPanelKey = ref(0);
 
 const rules: FormRules = {
   name: [{ required: true, message: "请填写名称" }],
   value: [{ required: true, message: "请填写值" }],
 };
 
+watch(visible, (value) => {
+  if (value) {
+    colorPickerPanelKey.value += 1;
+  }
+});
+
+watch(
+  () => formData.value.color,
+  (value, oldValue) => {
+    if (!value && oldValue) {
+      colorPickerPanelKey.value += 1;
+    }
+  },
+);
+
 const getDetailInfo = async (params) =>
   getDictItemDetailApi(params).then((res) => ({
     name: res.name,
     value: res.value,
+    color: res.color || "",
     status: res.status === 1,
   }));
 
