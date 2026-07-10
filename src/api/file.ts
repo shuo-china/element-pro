@@ -49,7 +49,7 @@ function getFileNameFromHeaders(
 }
 
 export function downloadApi(url: string, params?: Record<string, any>) {
-  return request<number>({
+  return request<Blob>({
     url,
     params,
     method: "get",

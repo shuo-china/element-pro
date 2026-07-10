@@ -30,6 +30,17 @@ const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
+async function parseBlobErrorData(data: unknown) {
+  if (!(data instanceof Blob)) return data;
+
+  try {
+    const text = await data.text();
+    return text ? JSON.parse(text) : data;
+  } catch {
+    return data;
+  }
+}
+
 axiosInstance.interceptors.request.use((config) => {
   const managerStore = useManagerStore();
   if (managerStore.token) {
@@ -40,17 +51,19 @@ axiosInstance.interceptors.request.use((config) => {
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     // http status code !2xx
     const { response, message, config } = error;
 
     if (response && response.data) {
-      if (response.status === 401 && response.data.code === "TOKEN_INVALID") {
+      const responseData = await parseBlobErrorData(response.data);
+
+      if (response.status === 401 && responseData.code === "TOKEN_INVALID") {
         useManagerStore().clear();
         location.reload();
-        return Promise.reject(new ApiTokenInvalidError(response.data));
+        return Promise.reject(new ApiTokenInvalidError(responseData));
       } else {
-        const errorMsg = response.data.message || message || "Unknown Error";
+        const errorMsg = responseData.message || message || "Unknown Error";
         if (response.status >= 500) {
           ElNotification({
             type: "error",
@@ -61,7 +74,7 @@ axiosInstance.interceptors.response.use(
           ElMessage.error(errorMsg);
         }
         return Promise.reject(
-          new ApiError(errorMsg, response.status, response.data),
+          new ApiError(errorMsg, response.status, responseData),
         );
       }
     } else {

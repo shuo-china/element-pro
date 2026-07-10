@@ -1,7 +1,7 @@
 <template>
-  <div class="mb-6">
+  <div class="mb-4">
     <el-form ref="formRef" label-suffix=":" @submit.prevent v-bind="formProps">
-      <el-row :gutter="36" class="gap-y-6">
+      <el-row :gutter="24" class="gap-y-4">
         <el-col
           v-for="(vnode, index) in $slots.default?.()"
           v-bind="span"
